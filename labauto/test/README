@@ -1,0 +1,59 @@
+2009-08-28 20:12
+
+This is a test setup (very crude) to test our laboratory control.
+
+1) Hardware setup:
+
+[Computer1] <-LAN-> [Computer2] <-- Oscilloscope <-- Function generator
+                        |                                  ^
+                        |                                  |
+                        \-----------------------------------
+
+
+2) Software setup:
+
+  a) Computer2 monitors the Oscilloscope via USBTMC connection with a
+looped script (tekusb2.py).
+
+  b) The measured voltage waveform is saved as an image file
+on Computer1.
+
+  c) Computer1 runs a webserver that displays the recorded image
+(lab.cgi), and also some control interface, that can adjust the
+function generator. If the control interface is updated, the new
+settings are saved as a file on Computer1.
+
+  d) On Computer2 another looped script (remote.py) monitors the
+settings file for the function generator, and updates its behaviour
+(waveform, frequency) accordingly, over USB->RS-232 connection.
+
+3) Current issues:
+
+  a) The USBTMC connections is not very reliable. Lost data are quite
+common. Also, the flow-control is not really existent in the current
+code because don't know any standard prectice that can be used. Also,
+the high resolution data retrieval (the 16bit/width-2 instead of the
+standard 8bit-width1) never really finishes, which is a fail.
+
+  b) The Oscilloscope monitoring script eats up memmory quite quickly
+(2Gb in about 15-20 minutes or running). Should figure out why and how
+to stop that.
+
+  c) Looping is very slow, the web interface needs 20-30s to get the new
+data.
+
+  d) The frequency scaling is not reliable on the web interface, the
+parameters must be somehow mixed up...
+
+
+TODO:
+
+  1) Figure out more reliable method of reading oscilloscope.
+  1b) If works, make a reusable oscilloscope driver over USBMTC
+
+  2) Find useful prospective real-life setup.
+
+  3) ...
+
+  4) PROFIT!
+
