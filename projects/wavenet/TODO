@@ -1,8 +1,5 @@
 + make completely separate Wavemeter driver
 + port auto-selection of cannot connect to the set one
 + more error catching and correction
-+ connection listening with timeout / interactivity
 + better logging: better messages, levels, logfile
 + extend README, more details, setup, hardware, etc....
-+ check connection with logger that stays connected
-  + if any problem: use UDP packages instead of TCP

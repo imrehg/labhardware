@@ -1,57 +1,47 @@
 #!/usr/bin/env python
 
-from socket import *
+import SocketServer
 import sys
 import serial
 from re import match
 
 BUFSIZ = 4096
+DEFAULTPORT = 31234
 
-class ServCmd:
-    def __init__(self, wavemeter, host='', port=31234):
-        self.__serv = socket(AF_INET, SOCK_STREAM)
-        ADDR = (host, port)
-        self.__serv.bind((ADDR))
-        self.__cli = None
-        self.__imlistening  = 0
-        self.__improcessing = 0
+class WaveUDPServer(SocketServer.UDPServer):
+    ''' Our UDP server to reply to client requests for wavemeter
+    information.'''
+
+    def __init__(self, address, HandlerClass, wavemeter):
+        ''' Overwrite __init__ so we can pass the wavemeter object to the
+        request handler.'''
         self.wavemeter = wavemeter
-        self.__run()
-  
-    def __run(self):
-        self.__imlistening = 1
-        while self.__imlistening:
-            self.__listen()
-            self.__improcessing = 1
-            while self.__improcessing:
-                self.__procCmd()
-            self.__cli.close()
-        self.__serv.close()
-  
-    def __listen(self):
-        self.__serv.listen(5)
-        print '...listening'
-        cli,addr = self.__serv.accept()
-        self.__cli = cli
-        print '...connected: ', addr
-  
-    def __procCmd(self):
-        cmd = self.__cli.recv(BUFSIZ)
-        if not cmd: return
-#        print cmd
-        self.__servCmd(cmd)
-        if self.__improcessing: 
-            if cmd == 'WAVELENGTH':
-                wavelength = self.wavemeter.QueryWavelength()
-                print wavelength
-                self.__cli.send("%s" %(wavelength))
-            else:
-                self.__cli.send('?')
-  
-    def __servCmd(self, cmd):
-        cmd = cmd.strip()
-        if cmd == 'BYE': 
-            self.__improcessing = 0
+        SocketServer.UDPServer.__init__(self, address, HandlerClass)
+
+    def finish_request(self, request, client):
+        ''' Reply to request of remote clients '''
+        self.RequestHandlerClass(request, client, self, self.wavemeter)
+
+class WaveUDPRequestHandler(SocketServer.BaseRequestHandler):
+
+    def __init__(self, request, client, server, wavemeter):
+        self.wavemeter = wavemeter
+        SocketServer.BaseRequestHandler.__init__(self, request, client, server)
+
+    def handle(self):
+        cmd = self.request[0].strip()
+        socket = self.request[1]
+        reply = self.__procCmd(cmd)
+        socket.sendto(reply, self.client_address)
+
+    def __procCmd(self, cmd):
+        print "From %s got query: %s" %(self.client_address[0], cmd)
+        if cmd == 'WAVELENGTH':
+            wavelength = self.wavemeter.QueryWavelength()
+            reply = " %s " %(wavelength)
+        else:
+            reply = "?"
+        return reply
 
 class Wavemeter:
     def __init__(self, com, baud):
@@ -171,11 +161,17 @@ if __name__ == '__main__':
     ip_file = getconfig(config, 'IP', 'ip_file')
     port = getconfig(config, 'IP', 'port', getint=True)
     if port == None :
-        port = 31234
+        port = DEFAULTPORT
     getip(port=port, fix_ip=fix_ip, ip_mask=ip_mask, saveto=ip_file)
 
-	# Start server
-    serv = ServCmd(wavemeter, host='', port=port)
-
-    wavemeter.close()
-    print "Finish"
+    # Start server
+    server = WaveUDPServer(('', port), WaveUDPRequestHandler, wavemeter)
+    try:
+        server.serve_forever()
+    except ( KeyboardInterrupt , SystemExit ) :
+        pass
+    except:
+        raise
+    finally:
+        wavemeter.close()
+        print "Finished"

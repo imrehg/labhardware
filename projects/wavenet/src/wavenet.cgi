@@ -1,13 +1,16 @@
 #!/usr/bin/env python
 # a simple TCP client
   
-from socket import * 
+import socket
 from time import time
 from time import sleep 
 import sys 
 import string
+
 BUFSIZE = 4096
-  
+TIMEOUT = 3
+waveipfile = '/srv/labdata/Software/waveip'
+
 class CmdLine:
     def __init__(s,host,port):
         s.__HOST = host
@@ -28,7 +31,7 @@ class CmdLine:
         return data
    
 if __name__ == '__main__':
-    remote = open('/srv/labdata/Software/waveip',"r")
+    remote = open(waveipfile,"r")
     addr = remote.readline()
     info = string.split(addr,':')
     host = info[0]
@@ -36,11 +39,12 @@ if __name__ == '__main__':
 
     goodconnection = True
     try:
-        conn = CmdLine(host,port)
-        conn.makeConnection()
-        conn.sendCmd('WAVELENGTH')
-        message = conn.getResults()
-        conn.sendCmd('BYE') 
+        cmd ='WAVELENGTH'
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock.settimeout(TIMEOUT)
+        sock.sendto(cmd, (host, port))
+        message = sock.recv(1024)
+        sock.close()
     except:
         goodconnection = False
         message = "<i>Cannot connect to Wavenet server, \
