@@ -6,14 +6,11 @@ import serial
 from re import match
 
 BUFSIZ = 4096
-HOST = ''
-PORT = 30222
-ADDR = (HOST,PORT)
-counter = 0 
 
 class ServCmd:
-    def __init__(self, wavemeter):
-        self.__serv = socket( AF_INET,SOCK_STREAM)
+    def __init__(self, wavemeter, host='', port=31234):
+        self.__serv = socket(AF_INET, SOCK_STREAM)
+        ADDR = (host, port)
         self.__serv.bind((ADDR))
         self.__cli = None
         self.__imlistening  = 0
@@ -57,15 +54,28 @@ class ServCmd:
             self.__improcessing = 0
 
 class Wavemeter:
-    def __init__(self, com):
-        self.ser = serial.Serial(port="COM%d"%(com),baudrate=19200, bytesize=8, stopbits=1, \
+    def __init__(self, com, baud):
+        self.ser = serial.Serial(port="%s"%(com),baudrate=baud, bytesize=8, stopbits=1, \
             parity=serial.PARITY_NONE, timeout=1)
         print "Connected to: %s " %(self.ser.portstr)
+        if (not self.__TestConnection()):
+            print "No Wavemeter on this port...."
+            self.close()
+            return None
 
     def close(self):
         print "Closing COM port"
         self.ser.close()
         
+    def __TestConnection(self):
+        self.__SendCmd(0x51)
+        reply = self.__GetReply().strip()
+        if (match("^.{11},[0-9A-F]{4},[0-9A-F]{4}", reply)):
+            found = True
+        else:
+            found = False
+        return found
+
     def __SendCmd(self, cmd):
         cmdout = "@%c\r\n" %(cmd)
         self.ser.write(cmdout)
@@ -88,40 +98,83 @@ class Wavemeter:
         wavelength = self.__ParseReply(reply)
         return wavelength
 
-def saveip(location, ip):
-    ''' Save IP address in shared area, so client script can connect '''
-    ipdata = gethostbyaddr(gethostname())[2]
-    for i in range(0,len(ipdata)):
-        if  match('^192',ipdata[i]):
-            ip = ipdata[i]
-            print "IP: %s" %(ip)
-            break
-    if len(ip) == 0:
-        return 1
-    waveip = open(location,"w")
-    waveip.write("%s:%d" %(ip,PORT))
-    waveip.close()
-    return 0
+def getip(port, fix_ip=None, ip_mask=None, saveto=None):
+    # ''' Save IP address in shared area, so client script can connect '''
+    ip = None
+    if fix_ip:
+        ip = fix_ip
+    elif ip_mask:
+        import netifaces
+        for interface in netifaces.interfaces():
+            for data in netifaces.ifaddresses(interface)[netifaces.AF_INET]:
+                tempip = data['addr']
+                if (match(ip_mask, tempip)):
+                    ip = tempip
+                break
+            if (ip):
+                break
+    if ip:
+        print "IP set: %s" %(ip)
+        if (saveto):
+            waveip = open(saveto,"w")
+            waveip.write("%s:%d" %(ip,port))
+            waveip.close()
+            print "IP:PORT saved to %s" %(saveto)
+    else:
+        print "cannot set IP address..."
+    
+def getconfig(config, section, setting, getint=False):
+    try:
+        if (getint):
+            value = config.getint(section, setting)
+        else:
+            value = config.get(section, setting)
+    except:
+        value = None
+    return value
 
 if __name__ == '__main__':
-    ''' Check Command Line, at least 1 but maybe 2 arguments needed'''
-    if (len(sys.argv) < 2):
+    import ConfigParser
+
+    config = ConfigParser.ConfigParser()
+    configfile = 'wavenetserver.cfg'
+    if (len(sys.argv) == 2):
+        configfile = sys.argv[1]
+    try:
+        config.read(configfile)
+    except:
+        raise
+        print("Cannot open configuration file: %s" %(configfile))
+        raw_input("Press any key to exit...")
         exit()
 
-    ''' Get IP address '''
-    if saveip("//Labserver/labdata/Software/waveip", ''):
-        print "IP address cannot be found - checking command line"
-        if (len(sys.argv) == 3):
-            saveip("//Labserver/labdata/Software/waveip", sys.argv[2])
+    # Connect to Wavemeter over COM port
+    combase = config.get('COM', 'combase')
+    baud = config.getint('COM', 'baud')
+    wavemeter = None
+    for i in range(0, 10):
+        try:
+            wavemeter = Wavemeter("%s%d" %(combase, i), baud)
+        except:
+            continue
+        if (not wavemeter):
+            continue
         else:
-            exit()
-        
-    ''' Get desired COM port '''
-    com = int(sys.argv[1])
-    
-    ''' Connect to wavemeter '''
-    wavemeter = Wavemeter(com)
-    serv = ServCmd(wavemeter)
-    
+            break
+    if (not wavemeter):
+        print "No wavemeter found with current settings."
+
+    # Get IP
+    fix_ip = getconfig(config, 'IP', 'fix_ip')
+    ip_mask = getconfig(config, 'IP', 'ip_mask')
+    ip_file = getconfig(config, 'IP', 'ip_file')
+    port = getconfig(config, 'IP', 'port', getint=True)
+    if port == None :
+        port = 31234
+    getip(port=port, fix_ip=fix_ip, ip_mask=ip_mask, saveto=ip_file)
+
+	# Start server
+    serv = ServCmd(wavemeter, host='', port=port)
+
     wavemeter.close()
     print "Finish"
