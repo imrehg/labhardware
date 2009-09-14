@@ -1,0 +1,54 @@
+wavenet: read WA-1500 wavemeter on LAN
+
+Previously a webcam+computer setup was used to monitor the wavemeter
+in our laboratory. It is not too convenient and should be replaced
+by a better solution. This project should be just that!
+
+Aim
+===
+
+* RS-232 connection to wavemeter
+* Minimal software requirements, both for server and clients
+* Support for multiple clients
+* "dumb" server, should provide merely data, interpretation up to clients
+* provide status and diagnostic bits as well
+* clients for web/Android/desktop/logging
+
+Operation
+=========
+
+* The wavemeter is connected to a computer with RS-232(-to-USB) cable.
+* Server program running on that computer at startup:
+  * Checks/reads IP address, and advertises it on the network by writing it in a file
+  * Connects to COM port
+  * Starts listening on a network port
+* Client software can read the server's location from the file
+* When client connects, can submit certain commands to the server which should reply
+  * 'WAVELENGTH' command (without quotes): server queries the wavemeter for current
+    wavelength and returns wavelength string to client.
+
+Caveats
+=======
+* Currently a maximum number of 5 clients can connect to a single server, and only one
+  server can run on the network.
+* Error codes, other status are not returned, have to check "manually".
+
+Usage
+=====
+Windows server:
+ 1) run python script, or
+ 2) compile into exe by running %python% setup.py py2exe
+    run resulting executable from bat
+Linux server:
+ 1) has python anyway, so just run script
+
+Program arguments:
+server.exe X A.B.C.D
+where X: com port number, eg. if COM3 then 3
+and A.B.C.D is the IP address (not needed on XP, needed on Vista)
+
+License
+=======
+
+Released under MIT license, see License.txt file.
+Essentially: I'm happy if you use it, hope it's helpful.
