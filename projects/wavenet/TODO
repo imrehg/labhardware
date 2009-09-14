@@ -3,3 +3,4 @@
 + more error catching and correction
 + connection listening with timeout / interactivity
 + better logging: better messages, levels, logfile
++ extend README, more details, setup, hardware, etc....
