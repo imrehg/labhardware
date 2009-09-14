@@ -143,9 +143,8 @@ if __name__ == '__main__':
     try:
         config.read(configfile)
     except:
-        raise
         print("Cannot open configuration file: %s" %(configfile))
-        raw_input("Press any key to exit...")
+        raw_input("Press any key to exit ...")
         exit()
 
     # Connect to Wavemeter over COM port
@@ -163,6 +162,8 @@ if __name__ == '__main__':
             break
     if (not wavemeter):
         print "No wavemeter found with current settings."
+        raw_input("Press any key to exit ...")
+        exit()
 
     # Get IP
     fix_ip = getconfig(config, 'IP', 'fix_ip')
