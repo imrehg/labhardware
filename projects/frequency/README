@@ -1,0 +1,13 @@
+frequency
+---------
+
+Monitoring beat-frequency between two frequency-stabilized lasers. This
+project to replace current less functional Labview code.
+
+Parts:
+------
+* Logger : simple logger to save frequency counter and multimeter data
+
+* Server : share data over the network
+
+* Client : pull data over the network and do quick analysis
