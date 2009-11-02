@@ -36,10 +36,12 @@ while True:
         counter.initMeasure()
         volts = multi.getDCVoltage(vrange,vresolution)
         freq = counter.getFreq()
-        now = (time() + start) / 2
-        result = array([[now, freq, volts]])
+        now = time()
+        measuretime = (now + start) / 2
+        elapsed = now - start
+        result = array([[measuretime, freq, volts]])
         savetxt(out, result)
-        print "%f Hz / %f V" %(freq, volts)
+        print "%f Hz / %f V / %f s" %(freq, volts, elapsed)
     except (KeyboardInterrupt):
         break
 out.close()
