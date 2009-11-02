@@ -23,7 +23,7 @@ multi.reset()
 # Setting up output file
 datafile = "beat_%s.log" %(strftime("%y%m%d_%H%M%S"))
 out = file(datafile, 'a')
-savetxt(out, "Time(UnixTime) BeatFrequency(Hz) Voltage(V)")
+out.write("Time(UnixTime) BeatFrequency(Hz) Voltage(V)")
 
 while True:
     try:
