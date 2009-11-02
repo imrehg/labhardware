@@ -25,6 +25,7 @@ datafile = "beat_%s.log" %(strftime("%y%m%d_%H%M%S"))
 out = file(datafile, 'a')
 out.write("Time(UnixTime) BeatFrequency(Hz) Voltage(V)")
 
+# Do logging until stopped by Ctrl-C
 while True:
     try:
         start = time()
