@@ -34,7 +34,7 @@ while True:
         now = (time() + start) / 2
         result = array([[now, freq, volts]])
         savetxt(out, result)
-        print "%f Hz" %(freq)
+        print "%f Hz / %f V" %(freq, volts)
     except (KeyboardInterrupt):
         break
 out.close()
