@@ -11,6 +11,8 @@ vresolution = 0.0001
 
 # Setting up frequency counter
 counter = AgilentCounter(gpib = countergpib)
+if (conter == None):
+    exit
 counter.reset()
 counter.setupFast()
 counter.write(":FUNC 'FREQ 1'")
@@ -18,6 +20,8 @@ counter.setupGating(0.1)
 
 # Setting up multimeter
 multi = AgilentMultimeter(gpib = multigpib)
+if (multi == None):
+    exit
 multi.reset()
 
 # Setting up output file
