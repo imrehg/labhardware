@@ -1,4 +1,4 @@
-from time import time, strftime, sleep
+from time import time, strftime
 from numpy import savetxt, array
 from agilentcounter import AgilentCounter
 from agilentmultimeter import AgilentMultimeter
