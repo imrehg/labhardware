@@ -11,7 +11,7 @@ vresolution = 0.0001
 
 # Setting up frequency counter
 counter = AgilentCounter(gpib = countergpib)
-if (conter == None):
+if (counter == None):
     exit
 counter.reset()
 counter.setupFast()
