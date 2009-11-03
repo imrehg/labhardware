@@ -23,6 +23,12 @@ multi = AgilentMultimeter(gpib = multigpib)
 if (multi == None):
     exit
 multi.reset()
+# 5-1/2 digits fast
+multi.write("CONF:VOLT:DC %d" %(vrange))
+multi.write("VOLT:DC:NPLC 0.2")
+multi.write("TRIG:SOUR IMM")
+# Need to do one reading to set up Wait-For-Trigger state!
+multi.ask("READ?")
 
 # Setting up output file
 datafile = "beat_%s.log" %(strftime("%y%m%d_%H%M%S"))
@@ -34,7 +40,7 @@ while True:
     try:
         start = time()
         counter.initMeasure()
-        volts = multi.getDCVoltage(vrange,vresolution)
+        volts = float(multi.ask("READ?"))
         freq = counter.getFreq()
         now = time()
         measuretime = (now + start) / 2
