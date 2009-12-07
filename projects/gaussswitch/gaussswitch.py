@@ -79,10 +79,10 @@ mag = Sensors("Dev2/ai0:2", minv = -5.0, maxv = 5.0,
 # 4) Read data
 
 relay.set(value = 1)
-sleep(1)
+sleep(2)
 
 mag.start()
-sleep(0.05)
+sleep(0.01)
 relay.toggle()
 mag.wait_until_done(timeout=2)
 aidata = mag.read()
