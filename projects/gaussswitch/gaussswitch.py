@@ -8,10 +8,10 @@ from numpy import savetxt, linspace, column_stack
 ## Settings
 
 # Analog Input rate (1/s)
-airate = 10000
+airate = 300000
 
 # Recorded points
-numpoints = 10000
+numpoints = 30000
 
 ####################################
 
