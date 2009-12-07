@@ -92,7 +92,7 @@ tottime = (numpoints - 1) * tstep
 timedata = linspace(0, tottime, numpoints)
 
 # Setting up output file
-datafile = "errorsig_%s.log" %(strftime("%y%m%d_%H%M%S"))
+datafile = "gauss_%s.log" %(strftime("%y%m%d_%H%M%S"))
 out = file(datafile, 'a')
 out.write("#Time(s) Voltage(V):Ch1 / Ch2 / Ch3\n")
 savetxt(out, column_stack((timedata, aidata)))
