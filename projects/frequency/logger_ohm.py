@@ -24,7 +24,7 @@ if (multi == None):
     exit
 multi.reset()
 # Resistance measurement
-multi.write("CONF:FRESISTANCE:DC %d" %(vrange))
+multi.write("CONF:FRESISTANCE" %(vrange))
 multi.write("FRESISTANCE:NPLC 0.2")
 multi.write("TRIG:SOUR IMM")
 # Need to do one reading to set up Wait-For-Trigger state!
