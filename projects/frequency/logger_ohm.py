@@ -23,9 +23,9 @@ multi = AgilentMultimeter(gpib = multigpib)
 if (multi == None):
     exit
 multi.reset()
-# Resistance measurement
-multi.write("CONF:FRESISTANCE" %(vrange))
-multi.write("FRESISTANCE:NPLC 0.2")
+# Resistance measurement - 2 Wire
+multi.write("CONF:RESISTANCE")
+multi.write("RESISTANCE:NPLC 0.2")
 multi.write("TRIG:SOUR IMM")
 # Need to do one reading to set up Wait-For-Trigger state!
 multi.ask("READ?")
