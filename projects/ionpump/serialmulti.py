@@ -11,7 +11,7 @@
 
 import serial
 import re
-from time import time
+from time import time, sleep
 import logging
 logger = logging.getLogger('serialmulti')
 hdlr = logging.FileHandler('./pump.log')
@@ -63,6 +63,7 @@ try:
         if ( re.match('^[ODA]+', line) ):
             #~ print "%s" % (line)
             interpret(line)
+	sleep(2)
 except (KeyboardInterrupt):
     # Exit with Control-C
     pass
