@@ -1,0 +1,91 @@
+*Wall-effect experiment programming. Notes.*
+Deadline of usable version: <2010-03-17 Wed>
+
+* Motivation
+The motivation to do this experiment by computer control, among others:
+  1) Repeatable
+  2) More precise
+  3) Quicker
+  4) More convenient
+  5) Useful learning
+
+* TODO Translation stage
+The translation stage will move a small Cs (+Xe) cell within the beampath of
+a stabilized laser beam, to observe whether there's a wall-effect on the
+Cs transition frequencies.
+
+** Control program details
+ 1) [ ] Manual control
+    Have to be able to manually translate the stage.
+    + Big step / small step
+    + Move / Stop
+    + Remember positions and call them back
+ 2) [ ] Center search
+    + Manual move to the walls
+    + Automatically move to the centre
+ 3) [ ] Experimental sequence
+    Input:
+    + Start / End positions
+    + Number of positions in-between (# of steps)
+    Sequence (tentative):
+    1) Move to centre
+    2) Do measurement
+    3) Log positions and frequencies
+    4) Move next position
+
+* PMT locking
+The frequency of the laser will be stabilized with an error signal from a PMT.
+If the translation stage is moved slowly enough, the lock can follow the expected
+small change in the transition frequency.
+
+Initially don't have to worry about it, as the experiment won't take long
+(ideally), and the lock monitoring can be done manually.
+
+** Improvement: automatic "out-of-lock"
+Being out of lock can be detected by monitoring the error signal of the locking
+circuit. A DAQ could be used by the computer to monitor the signal and stop the
+experiment if there's a problem. (Bonus point for electronic alert.)
+
+* TODO Frequency counter
+The frequency shift will be monitored by making a beatnote to another laser and
+monitoring the beatnote frequency. Previously we already did automatic logging
+(You-Huan: "../frequency" and "../voltrecord" projects).
+
+* Programming notes
+Programming will be done in Python (most likely) because of easy iteration, the
+pyserial library, logging modules, easier GUI programming, no stringent timing
+needed but ease of use. Also, awailabe on Linux and Windows.
+** Data interfaces:
+  * Translation stage: USB-serial
+    - Translation stage class. Essential commands:
+      + Get position / target / error
+        Is there "absolute" position?
+        Convert to physical distance
+      + Set "home" / Go "home"
+      + Set / Get speed
+      + Move / Wait for move to finish
+      + Get error conditions
+  * Frequency counter: USB-GPIB
+    - Clean up frequency counter class and implement useful routines
+    - Find right parameters (averaging time, ...) for this experiment
+  * PMT locking: USB / NI
+
+** Graphical interface
+Should choose a suitable graphical interface that is available both in Linux and
+Windows. Probably the ultimate environment will be Windows (because of the GPIB
+and NI interfaces, that are currently unavailable in Linux, and also because I
+don't need to shock the others with my Linux too much more). 
+
++ Possible choices:
+  + WxPython
+  + PyGTK
++ Requirements:
+  + Figures (graphical depiction of beam position, only bonus)
+  + Keyboard shortcuts
+  + Buttons
+  + Feedback fields (labels)
+  + Easy extendibility
+  + Template-style GUI generation
+** Documentation
+Most important is to have good code, but in the end do proper documentation as well
+on how to connect things, how to run the program, screenshots, etc.... (bonus point)
