@@ -1,6 +1,85 @@
 #!/usr/bin/env python
 
 # RS-232 Serial support  for PI C-862 motor controller
+#
+# Based on:
+# MS 74E User Manual
+# C-862 Mercury DC-Motor Controller
+# Release: 8.4.3 Date: 2005-10-27
+"""
+ List of commands:
+ AB  Abort: Stop motion abruptly
+ AB1 Abort: Stop motion smoothly with programmed deceleration
+ BF  Set brake OFF
+ BN  Set brake ON
+ CA  Pulse output for PZT stages, channel A
+ CB  Pulse output for PZT stages, channel B
+ CF  Channel OFF
+ CN  Channel ON
+ CP  Channel pattern
+ CS  Report checksum
+ DD  Define d-term (derivative gain)
+ DH  Define home
+ DI  Define i-term (integral gain)
+ DL  Define integration limit
+ DP  Define p-term (proportional gain)
+ EF  Set Echo OFF
+ EM  Execute Macro
+ EN  Set Echo ON
+ FE  Find edge (find origin position )
+ GD  Get d-term
+ GH  Go home
+ GI  Get i-term
+ GL  Get integration limit
+ GP  Get p-term
+ LF  Limit switch operation OFF
+ LH  Limit switches active high
+ LL  Limits switches active low
+ LN  Limit switch operation ON
+ MA  Move absolute
+ MD  Macro definition
+ MF  Motor off
+ MN  Motor on
+ MR  Move relative
+ RM  Reset (erase) macro
+ RP  Repeat from beginning of line
+ RT  Reset (like power-on reset)
+ SA  Set Acceleration
+ SC  Select controller
+ SM  Set maximum following error
+ ST  Stop motion smoothly and move back
+ SV  Set Velocity
+ TA  Tell analog input value
+ TB  Tell board address
+ TC  Tell channel (digital input)
+ TD  Tell dynamic target
+ TE  Tell error (distance from target)
+ TF  Tell profile following error
+ TI  Tell iteration number
+ TL  Tell programmed acceleration
+ TM  Tell macro contents
+ TP  Tell position
+ TS  Tell status
+ TT  Tell target position
+ TV  Tell actual velocity
+ TY  Tell programmed velocity
+ TZ  Tell Macro Zero
+ UD  Update flash
+ VE  Display version number
+ WA  Wait absolute time
+ WF  Wait channel OFF
+ WN  Wait channel ON
+ WS  Wait stop
+ XF  Execute if channel OFF
+ XN  Execute if channel ON
+ '   Single Character Command: TP (Tell Position)
+ #   Single Character Command: TC (Tell Channel)
+ %   Single Character Command: TS (Tell Status)
+ ?   Single Character Command: TE (Tell Position Error)
+ (   Single Character Command: TF (Tell Profile Error)
+ /   Single Character Command: (Tell LM629 status)
+ !   Single Character Command: Halt for all members
+"""
 
 import serial
 from time import time, sleep
