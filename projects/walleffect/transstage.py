@@ -123,7 +123,7 @@ class MotorControl:
         for i in range(lines_num):
             read += self.__cleanreadline()
             # print command+">>"+str(len(read))+">"+read+"<"
-            if i < lines_num:
+            if i < (lines_num - 1):
                  read += "\n"
         return(read)
 
