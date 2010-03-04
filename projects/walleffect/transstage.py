@@ -161,3 +161,101 @@ class MotorControl:
         if (maxerror < 400):
             maxerror = 400
         self.command("SM%d"%(maxerror))
+
+    def __bincheck(self, a, b):
+        if (int(a, 16) & (2 ** b)):
+            return(1)
+        else:
+            return(0)
+
+    def getstatus(self):
+        """ Get and interpret status messages
+        """
+        status = self.command("TS")
+
+        print "-- LM629 Status --"
+        part = status[2:4]
+        statmes = ["Busy", \
+                   "Command  error", \
+                   "Trajectory complete", \
+                   "Index pulse received", \
+                   "Position limit exceeded", \
+                   "Excessive position error", \
+                   "Breakpoint reached", \
+                   "Motor Loop OFF"]
+        for i in range(8):
+            if (self.__bincheck(part, i)):
+                print statmes[i]
+
+        print "-- Internal operation flags --"
+        part = status[5:7]
+        statmes = ["Echo ON", \
+                   "Wait in progress", \
+                   "Command error", \
+                   "Leading zero suppession active", \
+                   "Macro command called", \
+                   "Leading zero supression disabled", \
+                   "Number mode in effect", \
+                   "Board addressed"]
+        for i in range(8):
+            if (self.__bincheck(part, i)):
+                print statmes[i]
+
+        print "-- Motor loop flags --"
+        part = status[8:10]
+        statmes = ["N/A", \
+                   "N/A", \
+                   "Move direction polarity", \
+                   "Move error (MF condition occurred in WS)", \
+                   "N/A", \
+                   "N/A", \
+                   "Move error (Excess following error in WS)", \
+                   "Internal LM629 communication in progress"]
+        for i in range(8):
+            if (self.__bincheck(part, i)):
+                print statmes[i]
+
+        print "-- Signal lines status --"
+        part = status[11:13]
+        statmes = ["Limit swith ON", \
+                   "Limit switch active state HIGH", \
+                   "Find edge operation in progress", \
+                   "Brake ON", \
+                   "N/A", \
+                   "N/A", \
+                   "N/A", \
+                   "N/A"]
+        for i in range(8):
+            if (self.__bincheck(part, i)):
+                print statmes[i]
+
+        print "-- Signal input lines --"
+        part = status[14:16]
+        statmes = ["N/A", \
+                   "Reference signal input", \
+                   "Positive limit signal input", \
+                   "Negative limit signal input", \
+                   "N/A", \
+                   "N/A", \
+                   "N/A", \
+                   "N/A"]
+        for i in range(8):
+            if (self.__bincheck(part, i)):
+                print statmes[i]
+
+        print "-- Error codes --"
+        part =int(status[17:19], 16)
+        statmes = ["No error", \
+                   "Command not found", \
+                   "First command character was not a letter", \
+                   "N\A"
+                   "N\A"
+                   "Character following was not a digit", \
+                   "Value too large", \
+                   "Value too small", \
+                   "Continuation character was not a comma", \
+                   "Command buffer overflow", \
+                   "Macro storage overflow"];
+        if (part in range(10)):
+            print statmes[part]
+
