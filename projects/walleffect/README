@@ -13,6 +13,8 @@ The motivation to do this experiment by computer control, among others:
 The translation stage will move a small Cs (+Xe) cell within the beampath of
 a stabilized laser beam, to observe whether there's a wall-effect on the
 Cs transition frequencies.
+Our model is the M-505.4DG translation stage with C-862 Mercury DC Motor
+Controller
 
 ** Control program details
  1) [ ] Manual control
@@ -32,6 +34,22 @@ Cs transition frequencies.
     2) Do measurement
     3) Log positions and frequencies
     4) Move next position
+ 4) [ ] Calibration
+    + Distance scale (counts / distance)
+    + Optimal PID settings for lowet position error
+      From the document of M-505 (Section 5.3, p11):
+      |-----------------+---------+-----------------|
+      | Setting         |   Value |          Limits |
+      |-----------------+---------+-----------------|
+      | p-term DP       |     120 |         80..300 |
+      | i-term DI       |      20 |           0..50 |
+      | d-term DD       |     150 |          0..400 |
+      | i-limit DL      |    2000 |               - |
+      | acceleration SA | 1000000 | 500000..2500000 |
+      | velocity SV     |  180000 |       1..270000 |
+      |-----------------+---------+-----------------|
+      From experiment, the recommended acceleration
+      and velocity might be a bit too high...
 
 * PMT locking
 The frequency of the laser will be stabilized with an error signal from a PMT.
