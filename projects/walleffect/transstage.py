@@ -82,52 +82,82 @@
 """
 
 import serial
-from time import time, sleep
+
+class MotorControl:
+    """ C-862 DC Motor controller
+    """
+
+    def __init__(self, serialport, baudrate=9600, address="0"):
+        """ Create motor controller serial interface
+        Input:
+        serialport : name of the serial port (eg. "/dev/ttyUSB0" or "COM1")
+        baudrate=9600 : baudrate (standard: 9600, non-standard: 19200)
+        address=0 : set by DIP switches (0..F hex number in ASCII)
+        """
+        self.iface = serial.Serial(serialport, baudrate, bytesize=8, \
+                                   stopbits=1, parity=serial.PARITY_NONE, \
+                                   timeout=1, xonxoff=0, rtscts=0, dsrdtr=0)
+        self.setaddress(address)
 
 
-# Setting up connection. Needs the many DTR/RTS things for some reason....
-ser = serial.Serial('/dev/ttyUSB0',baudrate=9600, bytesize=8, stopbits=1, \
-    parity=serial.PARITY_NONE, timeout=1, xonxoff=0, rtscts=0, dsrdtr=0)
-
-def command(serial, command):
-    print "Command: %s" %(command)
-    serial.write(command+"\r")
-    return serial.readline().strip()
-
-def getposition(serial):
-    print "Position: %s" %(command(serial,"TP"))
-def getpostarget(serial):
-    print "Target: %s" %(command(serial,"TT"))
-def getposerror(serial):
-    print "Error: %s" %(command(serial,"TE"))
-
-def allpos(serial):
-    serial.write("TT,TP,TE\r")
-    tt = serial.readline().strip()
-    tp = serial.readline().strip()
-    te = serial.readline().strip()
-    print "Target: %s" %(tt)
-    print "Position: %s" %(tp)
-    print "Error: %s" %(te)
-
-def gohome(serial):
-    command(serial,"GH")
-
-def setvelocity(serial,velocity):
-    command(serial,"SV%d"%(velocity))
-
-def move(serial,distance):
-    print "Move: %d" %(distance)
-    command(serial,"MR%d"%(distance))
+    def setaddress(self, address):
+        """ Set address to talk to
+        Address: 0..F hex number in ASCII
+        """
+        self.command(chr(0x01) + address)
 
 
-ser.write(chr(0x01)+"0")
-move(ser,1000000)
-#gohome(ser)
+    def __cleanreadline(self):
+        """ Read one line on the interface and clean it
+        The standard reply ends with '\n\r'+ETX (end-of-text, 0x03),
+        which should be removed.
+        """
+        return self.iface.readline().strip('\r\n'+chr(0x03))
+	      
+    def command(self, command, lines_num=1):
+        """ Send command to controller, and read answer if there's any
+        For correct behaviour, it seems we have to read at least one line
+        """
+        self.iface.write(command+"\r")
+        read = ""
+        for i in range(lines_num):
+            read += self.__cleanreadline()
+            # print command+">>"+str(len(read))+">"+read+"<"
+            if i < lines_num:
+                 read += "\n"
+        return(read)
 
-getpostarget(ser)
-getposerror(ser)
-setvelocity(ser, 200000)
-#move(ser,-1000000)
+    def getposition(self):
+        """ Return current position
+        """
+        reply = self.command("TP", 1).strip()
+        pos = int(reply[2:])
+        return(pos)
 
+    def definehome(self):
+        """ Define current position as 'home', i.e. position 0
+        """
+        self.command("DH")
 
+    def moveabs(self, counts):
+        """ Move to absolute position defined by 'counts'
+        +/- direction, -: in, +: out
+        """
+        self.command("MA%d"%(counts))
+
+    def moverel(self, counts):
+        """ Move to absolute position defined by 'counts'
+        +/- direction, -: in, +: out
+        """
+        self.command("MR%d"%(counts))
+
+    def setvelocity(self, velocity):
+        self.command("SV%d"%(velocity))
+
+    def setmaxerror(self, maxerror):
+        """ Set maximum following error
+        If set to too low level, stage won't move
+        """
+        if (maxerror < 400):
+            maxerror = 400
+        self.command("SM%d"%(maxerror))
