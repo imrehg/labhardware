@@ -16,6 +16,7 @@ except:
 try: 
     import gtk
     import gtk.gdk
+    import gobject
     import gtk.glade 
 except: 
     sys.exit(1)
@@ -33,6 +34,7 @@ def catch_button(window, event, label):
 class appGui: 
     def __init__(self, cont):
         self.cont = cont
+        self.moveenabled = False
         gladefile = "experiment02.glade" 
         self.windowname = "window1" 
         self.wTree = gtk.glade.XML(gladefile, self.windowname)
@@ -56,6 +58,10 @@ class appGui:
         self.stepsizes = [1, 1000, 10000]
         # From measurement
         self.scale = 6487485 / 200000.0 * 1.875
+
+        self.pollposition(self.label1)
+        gobject.timeout_add(1000, self.pollposition, self.label1)
+        self.moveenabled = True
 
     def countfum(self, um):
         return int(self.scale * um)
@@ -82,6 +88,11 @@ class appGui:
         if self.moveenabled :
             cont.command("MR%d"%(distance)) 
         
+    def pollposition(self, label):
+        pos = self.cont.getposition()
+        label.set_text("Position:\n%d\n%.4f mm"%(pos, \
+                       self.umfcount(pos)/1000))
+        return True
 
 
 if __name__ == "__main__":
