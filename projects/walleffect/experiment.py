@@ -63,6 +63,11 @@ class appGui:
         gobject.timeout_add(1000, self.pollposition, self.label1)
         self.moveenabled = True
 
+        self.homesetbtn = self.wTree.get_widget("button1")
+        self.homesetbtn.connect('clicked', self.homeset)
+        self.gohomebtn = self.wTree.get_widget("button2")
+        self.gohomebtn.connect('clicked', self.gohome)
+
     def countfum(self, um):
         return int(self.scale * um)
 
@@ -94,6 +99,11 @@ class appGui:
                        self.umfcount(pos)/1000))
         return True
 
+    def homeset(self, widget):
+        cont.command("DH")
+
+    def gohome(self, widget):
+        cont.command("MA0")
 
 if __name__ == "__main__":
     
