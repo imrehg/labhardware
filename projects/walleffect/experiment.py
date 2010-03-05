@@ -45,7 +45,7 @@ class appGui:
         dic = {"on_window1_destroy" : gtk.main_quit, 
               }
         self.wTree.signal_autoconnect(dic)
-        self.label1 = self.wTree.get_widget("label1")
+        self.poslabel = self.wTree.get_widget("PositionLabel")
         self.window.connect('key-press-event', self.windowkey)
 
         self.stepbuttons = []
@@ -58,8 +58,8 @@ class appGui:
         # From measurement
         self.scale = 6487485 / 200000.0 * 1.875
 
-        self.pollposition(self.label1)
-        gobject.timeout_add(1000, self.pollposition, self.label1)
+        self.pollposition(self.poslabel)
+        gobject.timeout_add(1000, self.pollposition, self.poslabel)
         self.moveenabled = True
 
         self.homesetbtn = self.wTree.get_widget("button1")
