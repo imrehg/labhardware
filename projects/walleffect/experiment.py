@@ -44,7 +44,7 @@ class appGui:
               }
         self.wTree.signal_autoconnect(dic)
         self.label1 = self.wTree.get_widget("label1")
-        self.window.connect('key-press-event', self.windowkey, self.label1)
+        self.window.connect('key-press-event', self.windowkey)
 
         self.stepbtn1 = self.wTree.get_widget("radiobutton1")
         self.stepbtn2 = self.wTree.get_widget("radiobutton2")
@@ -63,14 +63,24 @@ class appGui:
     def umfcount(self, count):
         return count / self.scale
         
-    def windowkey(self, widget, event, label):
-        self.movestage("+")
+    def windowkey(self, widget, event):
+        keyval = event.keyval
+        name = gtk.gdk.keyval_name(keyval)
+        if (name == "Left"):
+            self.movestage("-")
+        elif (name == "Right"):
+            self.movestage("+")
 
     def movestage(self, direction):
         for i in range(len(self.stepbtns)):
             if (self.stepbtns[i].get_active()):
                 stepsize = i
                 break
+        distance = self.countfum(self.stepsizes[i])
+        if (direction == "-"):
+            distance *= -1
+        if self.moveenabled :
+            cont.command("MR%d"%(distance)) 
         
 
 
