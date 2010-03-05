@@ -76,7 +76,6 @@ class appGui:
 
 if __name__ == "__main__":
     
-    #cont = transstage.MotorControl('/dev/ttyUSB0')
-    cont = None
+    cont = transstage.MotorControl('/dev/ttyUSB0')
     app = appGui(cont)
     gtk.main()
