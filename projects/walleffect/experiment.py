@@ -48,14 +48,13 @@ class appGui:
         self.label1 = self.wTree.get_widget("label1")
         self.window.connect('key-press-event', self.windowkey)
 
-        self.stepbtn1 = self.wTree.get_widget("radiobutton1")
-        self.stepbtn2 = self.wTree.get_widget("radiobutton2")
-        self.stepbtn3 = self.wTree.get_widget("radiobutton3")
+        self.stepbuttons = []
+        for i in range(5):
+            self.stepbuttons.append(self.wTree.get_widget("stepbutton%d"%(i+1)))
+        self.stepbuttons[0].set_active(True)
 
-        self.stepbtns = [self.stepbtn1, self.stepbtn2, self.stepbtn3]
-        self.stepbtn3.set_active(True)
         # Step sizes of 1um, 1mm, 10mm
-        self.stepsizes = [1, 1000, 10000]
+        self.stepsizes = [10000, 1000, 100, 10, 1]
         # From measurement
         self.scale = 6487485 / 200000.0 * 1.875
 
@@ -83,19 +82,21 @@ class appGui:
             self.movestage("+")
 
     def movestage(self, direction):
-        for i in range(len(self.stepbtns)):
-            if (self.stepbtns[i].get_active()):
-                stepsize = i
+        i = 0
+        for button in self.stepbuttons:
+            if not button.get_active():
+                i = i + 1
+            else:
                 break
         distance = self.countfum(self.stepsizes[i])
         if (direction == "-"):
             distance *= -1
         if self.moveenabled :
-            cont.command("MR%d"%(distance)) 
-        
+            cont.command("MR%d"%(distance))
+
     def pollposition(self, label):
         pos = self.cont.getposition()
-        label.set_text("Position:\n%d\n%.4f mm"%(pos, \
+        label.set_text("%d count\n%.4f mm"%(pos, \
                        self.umfcount(pos)/1000))
         return True
 
