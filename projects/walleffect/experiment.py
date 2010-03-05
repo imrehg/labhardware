@@ -55,7 +55,7 @@ class appGui:
         # Step sizes of 1um, 1mm, 10mm
         self.stepsizes = [1, 1000, 10000]
         # From measurement
-        self.scale = 6487485 / 200000.0
+        self.scale = 6487485 / 200000.0 * 1.875
 
     def countfum(self, um):
         return int(self.scale * um)
