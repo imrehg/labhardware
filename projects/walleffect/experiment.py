@@ -115,9 +115,10 @@ if __name__ == "__main__":
         config.read('stage.conf')
         section = 'PID'
         for opt in config.options(section):
-            print "Set %d -> %s" %(opt, config.get(section, opt))
+            print "Set %s -> %s" %(opt, config.get(section, opt))
             cont.setparam(opt, int(config.get(section, opt)))
     except:
+        print "Error when parsing/applying settings. Continue anyway."
         pass
     app = appGui(cont)
     gtk.main()
