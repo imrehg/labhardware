@@ -154,6 +154,9 @@ class MotorControl:
     def setvelocity(self, velocity):
         self.command("SV%d"%(velocity))
 
+    def setparam(sefl, paramname, value):
+	self.command("%s%d"%(paramname.upper(), value))
+
     def setmaxerror(self, maxerror):
         """ Set maximum following error
         If set to too low level, stage won't move
