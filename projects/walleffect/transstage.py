@@ -161,8 +161,6 @@ class MotorControl:
         """ Set maximum following error
         If set to too low level, stage won't move
         """
-        if (maxerror < 400):
-            maxerror = 400
         self.command("SM%d"%(maxerror))
 
     def __bincheck(self, a, b):
