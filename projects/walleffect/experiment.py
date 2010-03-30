@@ -8,6 +8,8 @@ import sys
 #from matplotlib.backends.backend_gtk import FigureCanvasGTK, NavigationToolbar 
 #from matplotlib.numerix import arange, sin, pi 
 
+import ConfigParser
+
 try: 
     import pygtk 
     pygtk.require("2.0") 
@@ -107,7 +109,15 @@ class appGui:
         cont.command("MA0")
 
 if __name__ == "__main__":
-    
     cont = transstage.MotorControl('/dev/ttyUSB0')
+    try:
+        config = ConfigParser.RawConfigParser()
+        config.read('stage.conf')
+        section = 'PID'
+        for opt in config.options(section):
+            print "Set %d -> %s" %(opt, config.get(section, opt))
+            cont.setparam(opt, int(config.get(section, opt)))
+    except:
+        pass
     app = appGui(cont)
     gtk.main()
