@@ -110,8 +110,9 @@ class appGui:
                 break
         return self.countfum(self.stepsizes[i])
 
-    def movestage(self, direction):
-        distance = self.getstepsize()
+    def movestage(self, direction, distance=None):
+        if distance == None:
+            distance = self.getstepsize()
         if (direction == "-"):
             distance *= -1
         if self.moveenabled :
