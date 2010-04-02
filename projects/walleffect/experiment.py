@@ -69,10 +69,20 @@ class appGui:
         # Set move direction
         self.moveposbtn = self.wTree.get_widget("MovePosBtn")
 
+        # Alternative position
+        self.altpos = None
+
         self.homesetbtn = self.wTree.get_widget("button1")
         self.homesetbtn.connect('clicked', self.homeset)
         self.gohomebtn = self.wTree.get_widget("button2")
         self.gohomebtn.connect('clicked', self.gohome)
+
+        self.setaltposbtn = self.wTree.get_widget("SetAltPosBtn")
+        self.setaltposbtn.connect('clicked', self.setaltpos)
+        self.goaltposbtn = self.wTree.get_widget("GoToAltPosBtn")
+        self.goaltposbtn.connect('clicked', self.goaltpos)
+        self.altposlabel = self.wTree.get_widget("AltPosLabel")
+        self.altposlabel.set_text("Not set")
 
     def countfum(self, um):
         return int(self.scale * um)
@@ -111,10 +121,26 @@ class appGui:
         return True
 
     def homeset(self, widget):
+        # Refresh the alternative position
+        current = self.cont.getposition()
+        self.setaltpos(self, position=(self.altpos - current))
+        # Set home
         cont.command("DH")
 
     def gohome(self, widget):
         cont.command("MA0")
+
+    def setaltpos(self, widget=None, position=None):
+        if not position:
+            self.altpos = self.cont.getposition()
+        else:
+            self.altpos = position
+        self.altposlabel.set_text("%.4f mm" \
+                                  %(self.umfcount(self.altpos)/1000.0))
+
+    def goaltpos(self, widget):
+        if self.altpos:
+            self.cont.command("MA%d" %(self.altpos))
 
 if __name__ == "__main__":
     dirname = os.path.dirname(sys.argv[0])
