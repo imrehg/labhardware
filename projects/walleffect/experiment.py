@@ -9,6 +9,7 @@ import sys
 #from matplotlib.numerix import arange, sin, pi 
 
 import ConfigParser
+import os
 
 try: 
     import pygtk 
@@ -37,7 +38,8 @@ class appGui:
     def __init__(self, cont):
         self.cont = cont
         self.moveenabled = False
-        gladefile = "experiment02.glade" 
+        dirname = os.path.dirname(sys.argv[0])
+        gladefile = dirname + "/experiment02.glade"
         self.windowname = "window1" 
         self.wTree = gtk.glade.XML(gladefile, self.windowname)
         dic = {"on_mainWindow_destroy" : gtk.main_quit}
@@ -109,10 +111,11 @@ class appGui:
         cont.command("MA0")
 
 if __name__ == "__main__":
+    dirname = os.path.dirname(sys.argv[0])
     cont = transstage.MotorControl('/dev/ttyUSB0')
     try:
         config = ConfigParser.RawConfigParser()
-        config.read('stage.conf')
+        config.read(dirname+'/stage.conf')
         section = 'PID'
         for opt in config.options(section):
             print "Set %s -> %s" %(opt, config.get(section, opt))
