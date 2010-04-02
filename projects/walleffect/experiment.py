@@ -230,7 +230,7 @@ if __name__ == "__main__":
 
     splash = gtk.Window()
     splashimg = gtk.Image()
-    splashimg.set_from_file('splash.svg')
+    splashimg.set_from_file(dirname+'/splash.svg')
     splash.add(splashimg)
     splash.show_all()
     # Needed to display splash during the setup sequence
