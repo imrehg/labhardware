@@ -101,14 +101,17 @@ class appGui:
         elif (name == "Right"):
             self.movestage(direction[1])
 
-    def movestage(self, direction):
+    def getstepsize(self):
         i = 0
         for button in self.stepbuttons:
             if not button.get_active():
                 i = i + 1
             else:
                 break
-        distance = self.countfum(self.stepsizes[i])
+        return self.countfum(self.stepsizes[i])
+
+    def movestage(self, direction):
+        distance = self.getstepsize()
         if (direction == "-"):
             distance *= -1
         if self.moveenabled :
