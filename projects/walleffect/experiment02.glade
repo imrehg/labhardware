@@ -209,6 +209,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
+                            <property name="focus_on_click">False</property>
                           </widget>
                           <packing>
                             <property name="position">0</property>
@@ -220,6 +221,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
+                            <property name="focus_on_click">False</property>
                           </widget>
                           <packing>
                             <property name="position">1</property>
@@ -267,6 +269,7 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
+                                    <property name="focus_on_click">False</property>
                                   </widget>
                                   <packing>
                                     <property name="position">0</property>
@@ -278,6 +281,7 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
+                                    <property name="focus_on_click">False</property>
                                   </widget>
                                   <packing>
                                     <property name="position">1</property>
@@ -421,7 +425,7 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <widget class="GtkRadioButton" id="ScanTime2">
+                                  <widget class="GtkRadioButton" id="ScanTime1">
                                     <property name="label" translatable="yes">1.0 s</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
@@ -438,7 +442,7 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <widget class="GtkRadioButton" id="ScanTime">
+                                  <widget class="GtkRadioButton" id="ScanTime2">
                                     <property name="label" translatable="yes">0.5 s</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
