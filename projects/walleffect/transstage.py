@@ -173,8 +173,9 @@ class MotorControl:
         """ Get and interpret status messages
         """
         status = self.command("TS")
+        result = set([])
 
-        print "-- LM629 Status --"
+        # print "-- LM629 Status --"
         part = status[2:4]
         statmes = ["Busy", \
                    "Command  error", \
@@ -186,9 +187,9 @@ class MotorControl:
                    "Motor Loop OFF"]
         for i in range(8):
             if (self.__bincheck(part, i)):
-                print statmes[i]
+                result.add(statmes[i])
 
-        print "-- Internal operation flags --"
+        # print "-- Internal operation flags --"
         part = status[5:7]
         statmes = ["Echo ON", \
                    "Wait in progress", \
@@ -200,9 +201,9 @@ class MotorControl:
                    "Board addressed"]
         for i in range(8):
             if (self.__bincheck(part, i)):
-                print statmes[i]
+                result.add(statmes[i])
 
-        print "-- Motor loop flags --"
+        # print "-- Motor loop flags --"
         part = status[8:10]
         statmes = ["N/A", \
                    "N/A", \
@@ -214,9 +215,9 @@ class MotorControl:
                    "Internal LM629 communication in progress"]
         for i in range(8):
             if (self.__bincheck(part, i)):
-                print statmes[i]
+                result.add(statmes[i])
 
-        print "-- Signal lines status --"
+        # print "-- Signal lines status --"
         part = status[11:13]
         statmes = ["Limit swith ON", \
                    "Limit switch active state HIGH", \
@@ -228,9 +229,9 @@ class MotorControl:
                    "N/A"]
         for i in range(8):
             if (self.__bincheck(part, i)):
-                print statmes[i]
+                result.add(statmes[i])
 
-        print "-- Signal input lines --"
+        # print "-- Signal input lines --"
         part = status[14:16]
         statmes = ["N/A", \
                    "Reference signal input", \
@@ -242,9 +243,9 @@ class MotorControl:
                    "N/A"]
         for i in range(8):
             if (self.__bincheck(part, i)):
-                print statmes[i]
+                result.add(statmes[i])
 
-        print "-- Error codes --"
+        # print "-- Error codes --"
         part =int(status[17:19], 16)
         statmes = ["No error", \
                    "Command not found", \
@@ -258,5 +259,6 @@ class MotorControl:
                    "Command buffer overflow", \
                    "Macro storage overflow"];
         if (part in range(10)):
-            print statmes[part]
+            result.add(statmes[part])
 
+        return result
