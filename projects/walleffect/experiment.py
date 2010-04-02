@@ -119,6 +119,15 @@ class appGui:
 if __name__ == "__main__":
     dirname = os.path.dirname(sys.argv[0])
     cont = transstage.MotorControl('/dev/ttyUSB0')
+
+    splash = gtk.Window()
+    splashimg = gtk.Image()
+    splashimg.set_from_file('splash.svg')
+    splash.add(splashimg)
+    splash.show_all()
+    # Needed to display splash during the setup sequence
+    while gtk.events_pending():
+        gtk.main_iteration()
     try:
         config = ConfigParser.RawConfigParser()
         config.read(dirname+'/stage.conf')
@@ -129,5 +138,6 @@ if __name__ == "__main__":
     except:
         print "Error when parsing/applying settings. Continue anyway."
         pass
+    splash.hide()
     app = appGui(cont)
     gtk.main()
