@@ -66,6 +66,9 @@ class appGui:
         gobject.timeout_add(1000, self.pollposition, self.poslabel)
         self.moveenabled = True
 
+        # Set move direction
+        self.moveposbtn = self.wTree.get_widget("MovePosBtn")
+
         self.homesetbtn = self.wTree.get_widget("button1")
         self.homesetbtn.connect('clicked', self.homeset)
         self.gohomebtn = self.wTree.get_widget("button2")
@@ -78,12 +81,15 @@ class appGui:
         return count / self.scale
         
     def windowkey(self, widget, event):
+        direction = ["-", '+']
+        if not self.moveposbtn.get_active():
+            direction.reverse()
         keyval = event.keyval
         name = gtk.gdk.keyval_name(keyval)
         if (name == "Left"):
-            self.movestage("-")
+            self.movestage(direction[0])
         elif (name == "Right"):
-            self.movestage("+")
+            self.movestage(direction[1])
 
     def movestage(self, direction):
         i = 0
