@@ -128,7 +128,7 @@ class appGui:
         if (direction == "-"):
             distance *= -1
         if self.moveenabled :
-            cont.command("MR%d"%(distance))
+            cont.command("MR%d"%(distance), 0)
 
     def pollposition(self, label):
         pos = self.cont.getposition()
