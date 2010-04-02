@@ -84,6 +84,18 @@ class appGui:
         self.altposlabel = self.wTree.get_widget("AltPosLabel")
         self.altposlabel.set_text("Not set")
 
+        self.scandirbtn = self.wTree.get_widget("ScanDirButton")
+        self.scandirbtn.connect('clicked', self.scandirchange)
+        self.scanstartstopbtn = self.wTree.get_widget("ScanStartStopBtn")
+        self.scanstartstopbtn.connect('clicked', self.scanstartstop)
+        self.scanning = None
+        self.currentstep = None
+        self.scantimes = [2000, 1000, 500, 100]
+        self.scantimechoice = []
+        for i in range(4):
+            self.scantimechoice.append(self.wTree.get_widget("ScanTime%d"%(i)))
+        self.scantimechoice[0].set_active(True)
+
     def countfum(self, um):
         return int(self.scale * um)
 
@@ -145,6 +157,72 @@ class appGui:
     def goaltpos(self, widget):
         if self.altpos:
             self.cont.command("MA%d" %(self.altpos))
+
+    def getscantime(self):
+        i = 0
+        for choice in self.scantimechoice:
+            if not choice.get_active():
+                i = i + 1
+            else:
+                break
+        return self.scantimes[i]
+
+    def scandirchange(self, widget):
+        # Not Active: Home, Active: alternative
+        widget.set_label("%s" \
+                        %(("Scan to Home", "Scan to Alternative")[widget.get_active()]))
+
+    def scanstartstop(self, widget):
+        if widget.get_active():
+            self.startscan()
+        else:
+            self.stopscan()
+
+    def startscan(self):
+        self.scandirbtn.set_sensitive(False)
+        self.scanstartstopbtn.set_active(True)
+        self.scanstartstopbtn.set_label("Stop")
+        if self.scandirbtn.get_active():
+            target = self.altpos
+        else:
+            target = 0
+        scanpause = self.getscantime()
+        self.scanning = gobject.timeout_add(scanpause, self.scanstep, target)
+
+    def stopscan(self):
+        try:
+            gobject.source_remove(self.scanning)
+        except:
+            pass
+        finally:
+            self.scanning = None
+        self.scandirbtn.set_sensitive(True)
+        self.scanstartstopbtn.set_active(False)
+        self.scanstartstopbtn.set_label("Start")
+
+    def scanstep(self, target):
+        # If there's no target, don't scan
+        if target == None:
+            self.stopscan()
+            return False
+        if not ("Trajectory complete" in self.cont.getstatus()):
+            return True
+        aimstep = self.getstepsize()
+        pos  = self.cont.getposition()
+        diff = (target - pos)
+        # If within threshold, stop scanning
+        if abs(diff) < 30:
+            self.stopscan()
+            return False
+        stepsize = abs(diff) if (abs(diff) < aimstep) else aimstep
+        newpos = pos + int(diff * (diff/ abs(diff)))
+        self.currentstep = newpos
+        if (diff == abs(diff)):
+            direction = '+'
+        else:
+            direction = '-'
+        self.movestage(direction, stepsize)
+        return True
 
 if __name__ == "__main__":
     dirname = os.path.dirname(sys.argv[0])
