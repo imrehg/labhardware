@@ -56,6 +56,7 @@ class appGui:
         for i in range(5):
             self.stepbuttons.append(self.wTree.get_widget("stepbutton%d"%(i+1)))
         self.stepbuttons[0].set_active(True)
+        self.stepscale = self.wTree.get_widget("StepScalePull")
 
         # Step sizes of 1um, 1mm, 10mm
         self.stepsizes = [10000, 1000, 100, 10, 1]
@@ -112,15 +113,43 @@ class appGui:
             self.movestage(direction[0])
         elif (name == "Right"):
             self.movestage(direction[1])
+        elif (name == "Page_Up"):
+            self.stepmultiplier(True)
+        elif (name == "Page_Down"):
+            self.stepmultiplier(False)
+
+    def stepmultiplier(self, increase):
+        i, m = self.getstepparams()
+        if (increase):
+            if (i == 0) and (m == 9):
+                return
+            m = m + 1
+        else:
+            if (i == (len(self.stepsizes)-1)) and (m == 1):
+                return
+            m = m - 1
+        if (m > 9):
+            m = 1
+            i = i - 1
+        elif (m < 1):
+            m = 9
+            i = i + 1
+        self.stepbuttons[i].set_active(True)
+        self.stepscale.set_value(m)
 
     def getstepsize(self):
+        i, multiplier = self.getstepparams()
+        return self.countfum(self.stepsizes[i]*multiplier)
+
+    def getstepparams(self):
         i = 0
         for button in self.stepbuttons:
             if not button.get_active():
                 i = i + 1
             else:
                 break
-        return self.countfum(self.stepsizes[i])
+        multiplier = self.stepscale.get_value()
+        return (i, multiplier)
 
     def movestage(self, direction, distance=None):
         if distance == None:
