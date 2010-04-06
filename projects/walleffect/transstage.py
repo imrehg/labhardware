@@ -155,7 +155,7 @@ class MotorControl:
         self.command("SV%d"%(velocity))
 
     def setparam(self, paramname, value):
-	self.command("%s%d"%(paramname.upper(), value))
+	self.command("%s%d"%(paramname.upper(), value), 0)
 
     def setmaxerror(self, maxerror):
         """ Set maximum following error
