@@ -113,7 +113,9 @@
                                 <child>
                                   <widget class="GtkLabel" id="label1">
                                     <property name="visible">True</property>
-                                    <property name="label" translatable="yes">Left / Right arrows move</property>
+                                    <property name="label" translatable="yes">Left / Right arrows move
+PgUp / PgDn for multiplier</property>
+                                    <property name="use_markup">True</property>
                                   </widget>
                                   <packing>
                                     <property name="position">5</property>
@@ -127,6 +129,7 @@
                             <child>
                               <widget class="GtkVScale" id="StepScalePull">
                                 <property name="visible">True</property>
+                                <property name="sensitive">False</property>
                                 <property name="orientation">vertical</property>
                                 <property name="update_policy">discontinuous</property>
                                 <property name="adjustment">1 1 10 1 1 1</property>
