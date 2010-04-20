@@ -10,47 +10,74 @@
         <property name="visible">True</property>
         <property name="can_focus">True</property>
         <child>
-          <widget class="GtkHBox" id="hbox1">
+          <widget class="GtkFrame" id="frame1">
             <property name="visible">True</property>
+            <property name="label_xalign">0</property>
             <child>
-              <widget class="GtkLabel" id="InfoLabel">
+              <widget class="GtkAlignment" id="alignment1">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">At channel:</property>
+                <property name="left_padding">12</property>
+                <child>
+                  <widget class="GtkVBox" id="vbox3">
+                    <property name="visible">True</property>
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <widget class="GtkLabel" id="MaskLabel">
+                        <property name="visible">True</property>
+                        <property name="tooltip" translatable="yes">m: toggle mask</property>
+                        <property name="label" translatable="yes">&lt;b&gt;Mask:&lt;/b&gt;</property>
+                        <property name="use_markup">True</property>
+                      </widget>
+                      <packing>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkLabel" id="FrameLabel">
+                        <property name="visible">True</property>
+                        <property name="tooltip" translatable="yes">d / f: step down/up frame</property>
+                        <property name="label" translatable="yes">&lt;b&gt;Frame:&lt;/b&gt;</property>
+                        <property name="use_markup">True</property>
+                      </widget>
+                      <packing>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkLabel" id="ElementLabel">
+                        <property name="visible">True</property>
+                        <property name="tooltip" translatable="yes">w / e: step down/up in elements</property>
+                        <property name="label" translatable="yes">&lt;b&gt;Element:&lt;/b&gt;</property>
+                        <property name="use_markup">True</property>
+                      </widget>
+                      <packing>
+                        <property name="position">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkLabel" id="ValueLabel">
+                        <property name="visible">True</property>
+                        <property name="tooltip" translatable="yes">left / right: step down/up in element drive value
+PgDn / PgUp: step 100 units</property>
+                        <property name="label" translatable="yes">&lt;b&gt;Value:&lt;/b&gt;</property>
+                        <property name="use_markup">True</property>
+                      </widget>
+                      <packing>
+                        <property name="position">3</property>
+                      </packing>
+                    </child>
+                  </widget>
+                </child>
               </widget>
-              <packing>
-                <property name="position">0</property>
-              </packing>
             </child>
             <child>
-              <widget class="GtkVBox" id="vbox1">
+              <widget class="GtkLabel" id="InfoFrameLabel">
                 <property name="visible">True</property>
-                <property name="orientation">vertical</property>
-                <child>
-                  <widget class="GtkButton" id="ChannelOpenBtn">
-                    <property name="label" translatable="yes">All channel open</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="receives_default">True</property>
-                    <property name="image_position">right</property>
-                  </widget>
-                  <packing>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <widget class="GtkButton" id="ChannelCloseBtn">
-                    <property name="label" translatable="yes">All channel closed</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="receives_default">True</property>
-                  </widget>
-                  <packing>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
+                <property name="label" translatable="yes">&lt;b&gt;Information:&lt;/b&gt;</property>
+                <property name="use_markup">True</property>
               </widget>
               <packing>
-                <property name="position">1</property>
+                <property name="type">label_item</property>
               </packing>
             </child>
           </widget>

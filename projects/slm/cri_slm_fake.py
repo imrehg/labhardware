@@ -21,12 +21,13 @@ class SLM:
         self._Frame = 0
         self._NFrame = 128
         self._Element = 0
-        self._NElements = 128
+        self._NElement = 128
+        self._MaxValue = 4096
         self._pixels = []
         for M in xrange(self._NMask):
             Mask = []
             for F in xrange(self._NFrame):
-                Frame = [0]*self._NElements
+                Frame = [0]*self._NElement
                 Mask.append(Frame)
             self._pixels.append(Mask)
 
@@ -58,17 +59,69 @@ class SLM:
         resp = self.iface.readline(eol=self.termchar).strip()
         return resp
 
-slm = SLM('/dev/ttyUSB0')
-slm.set("E 10")
-slm.set("F 1")
-slm.set("E ?")
-# # set all levels to a previously known transmission level
-# drive = [820, 0]
-# for m in [0, 1]:
-#     slm.set("M %d" %(m))
-#     for i in xrange(0, 128):
-#         slm.set("E %d" %(i))
-#         slm.set("D %d" %(drive[m]))
-#     queries = ["M?", "E?", "D?"]
-#     for q in queries:
-#         print slm.query(q)
+    def cmdmask(self, command):
+        if command == '?':
+            return self._Mask
+        else:
+            try:
+                m = int(command)
+            except:
+                return
+            if m in range(self._NMask):
+                self._Mask = m
+            return
+
+    def cmdframe(self, command):
+        if command == '?':
+            return self._Frame
+        else:
+            try:
+                f = int(command)
+            except:
+                return
+            if f in range(self._NFrame):
+                self._Frame = f
+            return
+
+    def cmdelement(self, command):
+        if command == '?':
+            return self._Element
+        else:
+            try:
+                e = int(command)
+            except:
+                return
+            if e in range(self._NElement):
+                self._Element = e
+            return
+
+    def cmdvalue(self, command):
+        if command == '?':
+            return self._pixels[self._Mask][self._Frame][self._Element]
+        else:
+            try:
+                v = int(command)
+            except:
+                return
+            if 0 <= v < self._MaxValue:
+                self._pixels[self._Mask][self._Frame][self._Element] = v
+            return
+
+    def maxmask(self):
+        return self._NMask
+
+    def maxframe(self):
+        return self._NFrame
+
+    def maxelement(self):
+        return self._NElement
+
+    def maxvalue(self):
+        return self._MaxValue
+
+    def clearframe(self):
+        for e in xrange(self._NElement):
+            self._pixels[self._Mask][self._Frame][e] = 0
+                
+    def activeframe(self, frame):
+        pass
