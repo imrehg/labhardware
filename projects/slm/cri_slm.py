@@ -48,6 +48,24 @@ class SLM:
             finally:
                 return
 
+    def blockquery(self):
+        self.set("B?")
+        r = self.iface.read(self._NElement*2)
+        values = []
+        for i in xrange(0,self._NElement*2,2):
+            values.append(ord(r[i+1])*256 + ord(r[i]))
+        return values
+
+    def blockset(self, values):
+        if len(values) <> self._NElement:
+            return
+        out = ""
+        for i in range(self._NElement):
+            out += chr(values[i]%256)+chr(values[i]/256)
+        self.set("B1")
+        self.iface.write(out)
+        return
+
     def cmdmask(self, command):
         return self._cmdproto('M', command)
 
