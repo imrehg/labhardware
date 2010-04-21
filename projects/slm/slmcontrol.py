@@ -53,7 +53,6 @@ class appGui:
 
         self.updatelabels()
 
-#         self.poslabel = self.wTree.get_widget("PositionLabel")
         self.window.connect('key-press-event', self.windowkey)
 
     def updatelabels(self):
