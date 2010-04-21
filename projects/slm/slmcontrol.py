@@ -88,6 +88,10 @@ class appGui:
             self.changetarget(100, self.slm.cmdvalue, self.slm.maxvalue)
         elif name == 'Page_Down':
             self.changetarget(-100, self.slm.cmdvalue, self.slm.maxvalue)
+        elif name == 'o':
+            self.wholeframechange(-10)
+        elif name == 'p':
+            self.wholeframechange(10)
         elif name == 'c':
             self.clearframe()
 
@@ -110,6 +114,21 @@ class appGui:
     def clearframe(self):
         """ Clear current frame """
         self.slm.clearframe()
+        self.updatelabels()
+
+    def wholeframechange(self, change):
+        """ Move the whole frame value together up or down """
+        try:
+            change = int(change)
+        except:
+            return
+        e = self.slm.cmdelement('?')
+        maxelement = self.slm.maxelement()
+        for el in xrange(maxelement):
+            self.slm.cmdelement(el)
+            v = self.slm.cmdvalue('?')
+            self.slm.cmdvalue(v+change)
+        self.slm.cmdelement(e)
         self.updatelabels()
 
 
