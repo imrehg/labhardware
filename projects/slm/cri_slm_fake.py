@@ -59,6 +59,13 @@ class SLM:
         resp = self.iface.readline(eol=self.termchar).strip()
         return resp
 
+    def blockquery(self):
+        return self._pixels[self._Mask][self._Frame]
+
+    def blockset(self, values):
+        self._pixels[self._Mask][self._Frame] = values
+        return
+
     def cmdmask(self, command):
         if command == '?':
             return self._Mask
