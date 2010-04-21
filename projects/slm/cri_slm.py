@@ -76,4 +76,4 @@ class SLM:
         self.set("C 1")
                 
     def activeframe(self, frame):
-        self.set("P %d" frame)
+        self.set("P %d" %frame)
