@@ -11,30 +11,30 @@ import sys
 import ConfigParser
 import os
 
-try: 
-    import pygtk 
-    pygtk.require("2.0") 
-except: 
-    pass 
-try: 
+try:
+    import pygtk
+    pygtk.require("2.0")
+except:
+    pass
+try:
     import gtk
     import gtk.gdk
     import gobject
-    import gtk.glade 
+    import gtk.glade
     import pango
-except: 
+except:
     sys.exit(1)
 
 #import cri_slm_fake as cri_slm
 import cri_slm
  
-class appGui: 
+class appGui:
     def __init__(self, slm):
         self.slm = slm
         self.moveenabled = False
         dirname = os.path.dirname(sys.argv[0])
         gladefile = dirname + "/simple.glade"
-        self.windowname = "window1" 
+        self.windowname = "window1"
         self.wTree = gtk.glade.XML(gladefile, self.windowname)
         dic = {"on_mainWindow_destroy" : gtk.main_quit}
         self.wTree.signal_autoconnect(dic)
