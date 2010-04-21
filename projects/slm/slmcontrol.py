@@ -21,6 +21,7 @@ try:
     import gtk.gdk
     import gobject
     import gtk.glade 
+    import pango
 except: 
     sys.exit(1)
 
@@ -50,6 +51,12 @@ class appGui:
         self.elementlabeltext = self.elementlabel.get_label()
         self.valuelabel = self.wTree.get_widget("ValueLabel")
         self.valuelabeltext = self.valuelabel.get_label()
+
+        fontdesc = "Sans 36"
+        self.masklabel.modify_font(pango.FontDescription(fontdesc))
+        self.framelabel.modify_font(pango.FontDescription(fontdesc))
+        self.elementlabel.modify_font(pango.FontDescription(fontdesc))
+        self.valuelabel.modify_font(pango.FontDescription(fontdesc))
 
         self.updatelabels()
 
