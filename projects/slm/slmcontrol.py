@@ -24,8 +24,8 @@ try:
 except: 
     sys.exit(1)
 
-import cri_slm_fake as cri_slm
-
+#import cri_slm_fake as cri_slm
+import cri_slm
  
 class appGui: 
     def __init__(self, slm):
