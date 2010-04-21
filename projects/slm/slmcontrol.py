@@ -122,13 +122,16 @@ class appGui:
             change = int(change)
         except:
             return
-        e = self.slm.cmdelement('?')
-        maxelement = self.slm.maxelement()
-        for el in xrange(maxelement):
-            self.slm.cmdelement(el)
-            v = self.slm.cmdvalue('?')
-            self.slm.cmdvalue(v+change)
-        self.slm.cmdelement(e)
+        values = self.slm.blockquery()
+        def limit(u):
+            if u < 0:
+                return 0
+            elif u > 4095:
+                return 4095
+            else:
+                return u
+        update = [limit(v + change) for v in values]
+        self.slm.blockset(update)
         self.updatelabels()
 
 
