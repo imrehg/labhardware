@@ -36,53 +36,29 @@ class SLM:
         resp = self.iface.readline(eol=self.termchar).strip()
         return resp
 
-    def cmdmask(self, command):
-        if command == '?':
-            return self.query("M?")
+    def _cmdproto(self, target, command):
+        if  command == '?':
+            return int(self.query(target+command).split()[1])
         else:
             try:
-                m = int(command)
+                c = int(command)
+                self.set("%s %d" %(target, c))
             except:
+                pass
+            finally:
                 return
-            if m in range(self._NMask):
-                self.set("M %d" %m)
-            return
+
+    def cmdmask(self, command):
+        return self._cmdproto('M', command)
 
     def cmdframe(self, command):
-        if command == '?':
-            return self.query("F?")
-        else:
-            try:
-                f = int(command)
-            except:
-                return
-            if f in range(self._NFrame):
-                self.set("F %d" %f)
-            return
+        return self._cmdproto('F', command)
 
     def cmdelement(self, command):
-        if command == '?':
-            return self.query("E?")
-        else:
-            try:
-                e = int(command)
-            except:
-                return
-            if e in range(self._NElement):
-                self.set("E %d" %e)
-            return
+        return self._cmdproto('E', command)
 
     def cmdvalue(self, command):
-        if command == '?':
-            return self.query("D?")
-        else:
-            try:
-                v = int(command)
-            except:
-                return
-            if 0 <= v < self._MaxValue:
-                self.set("D %d" %v)
-            return
+        return self._cmdproto('D', command)
 
     def maxmask(self):
         return self._NMask
