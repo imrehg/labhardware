@@ -31,6 +31,7 @@ import cri_slm
 class appGui:
     def __init__(self, slm):
         self.slm = slm
+        self._saved = None
         self.moveenabled = False
         dirname = os.path.dirname(sys.argv[0])
         gladefile = dirname + "/simple.glade"
@@ -102,6 +103,10 @@ class appGui:
             self.wholeframechange(10)
         elif name == 'P':
             self.wholeframechange(1)
+        elif name == 's':
+            self.savevalues()
+        elif name == 'l':
+            self.loadvalues()
         elif name == 'c':
             self.clearframe()
 
@@ -144,6 +149,13 @@ class appGui:
         self.slm.blockset(update)
         self.updatelabels()
 
+    def savevalues(self):
+        self._saved = self.slm.blockquery()
+
+    def loadvalues(self):
+        if not (self._saved is None):
+            self.slm.blockset(self._saved)
+        self.updatelabels()
 
 if __name__ == "__main__":
     dirname = os.path.dirname(sys.argv[0])
