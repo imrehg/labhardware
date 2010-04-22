@@ -96,8 +96,12 @@ class appGui:
             self.changetarget(-100, self.slm.cmdvalue, self.slm.maxvalue)
         elif name == 'o':
             self.wholeframechange(-10)
+        elif name == 'O':
+            self.wholeframechange(-1)
         elif name == 'p':
             self.wholeframechange(10)
+        elif name == 'P':
+            self.wholeframechange(1)
         elif name == 'c':
             self.clearframe()
 

@@ -60,6 +60,7 @@
                         <property name="tooltip" translatable="yes">left / right: step down/up in element drive value
 PgDn / PgUp: step 100 units
 o / p : step all elements up / down with 10
+Shift + o / p : step all elements up / down with 1
 c : clear all element in the frame (value=0)</property>
                         <property name="label" translatable="yes">&lt;b&gt;Value:&lt;/b&gt;</property>
                         <property name="use_markup">True</property>
