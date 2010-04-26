@@ -107,6 +107,10 @@ class appGui:
             self.savevalues()
         elif name == 'l':
             self.loadvalues()
+        elif name == 'S':
+            self.savetofile()
+        elif name == 'L':
+            self.loadfromfile()
         elif name == 'c':
             self.clearframe()
 
@@ -156,6 +160,44 @@ class appGui:
         if not (self._saved is None):
             self.slm.blockset(self._saved)
         self.updatelabels()
+
+    def savetofile(self):
+        saveframe = gtk.FileChooserDialog(title="Save current frame", parent=None,
+                                          action=gtk.FILE_CHOOSER_ACTION_SAVE,
+                                          buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                                                   gtk.STOCK_SAVE, gtk.RESPONSE_OK),
+                                          backend=None)
+        saveframe.set_default_response(gtk.RESPONSE_OK)
+        response = saveframe.run()
+        if response == gtk.RESPONSE_OK:
+            name = saveframe.get_filename()
+            inframe = open(name, 'w')
+            values = self.slm.blockquery()
+            for v in values:
+                inframe.write("%d\n" %v)
+        saveframe.destroy()
+
+    def loadfromfile(self):
+        loadframe = gtk.FileChooserDialog(title="Load into current frame", parent=None,
+                                          action=gtk.FILE_CHOOSER_ACTION_OPEN,
+                                          buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                                                   gtk.STOCK_OPEN, gtk.RESPONSE_OK),
+                                          backend=None)
+        loadframe.set_default_response(gtk.RESPONSE_OK)
+        response = loadframe.run()
+        if response == gtk.RESPONSE_OK:
+            name = loadframe.get_filename()
+            try:
+                inframe = open(name, 'r')
+                values = []
+                for line in inframe.readlines():
+                    values.append(int(line))
+                self.slm.blockset(values)
+                self.updatelabels()
+            except:
+                pass
+        loadframe.destroy()
+
 
 if __name__ == "__main__":
     dirname = os.path.dirname(sys.argv[0])

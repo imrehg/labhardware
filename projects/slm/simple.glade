@@ -62,7 +62,8 @@ PgDn / PgUp: step 100 units
 o / p : step all elements up / down with 10
 Shift + o / p : step all elements up / down with 1
 c : clear all element in the frame (value=0)
-s / l : save / load values from current frame</property>
+s / l : save / load values from current frame from memory
+S / L : save / load values from current frame from file</property>
                         <property name="label" translatable="yes">&lt;b&gt;Value:&lt;/b&gt;</property>
                         <property name="use_markup">True</property>
                       </widget>
