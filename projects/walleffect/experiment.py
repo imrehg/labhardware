@@ -254,7 +254,6 @@ class appGui:
         return True
 
 if (__name__ == '__main__'):
-if __name__ == "__main__":
     dirname = os.path.dirname(sys.argv[0])
     cont = transstage.MotorControl('COM9')
 
