@@ -259,6 +259,9 @@ if (__name__ == '__main__'):
     dirname = os.path.dirname(sys.argv[0])
     if dirname != '' and os.name == 'nt':
         dirname += '/'
+    cont = transstage.MotorControl()
+    if not cont.connected:
+        sys.exit(2)
 
     splash = gtk.Window()
     splashimg = gtk.Image()

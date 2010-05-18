@@ -82,23 +82,50 @@
 """
 
 import serial
+import os
 
 class MotorControl:
     """ C-862 DC Motor controller
     """
 
-    def __init__(self, serialport, baudrate=9600, address="0"):
+    def __init__(self, serialport=None, baudrate=9600, address="0"):
         """ Create motor controller serial interface
         Input:
         serialport : name of the serial port (eg. "/dev/ttyUSB0" or "COM1")
         baudrate=9600 : baudrate (standard: 9600, non-standard: 19200)
         address=0 : set by DIP switches (0..F hex number in ASCII)
         """
-        self.iface = serial.Serial(serialport, baudrate, bytesize=8, \
-                                   stopbits=1, parity=serial.PARITY_NONE, \
-                                   timeout=1, xonxoff=0, rtscts=0, dsrdtr=0)
-        self.setaddress(address)
+        if (serialport is None):
+            if (os.name == 'nt'):
+                serialbase = "COM"
+                serialnumstart = 1
+            else:
+                serialbase = "/dev/ttyUSB"
+                serialnumstart = 0
+            for i in xrange(serialnumstart, 20):
+                self.iface = self.__connectport("%s%d" %(serialbase,i), baudrate, address)
+                if not (self.iface is None):
+                    print "Translation stage connected on %s%d" %(serialbase,i)
+                    break
+        else:
+            self.iface = self.__connectport(serialport, baudrate, address)
 
+        if (self.iface is None):
+            print "Cannot connect to translation stage"
+            self.connected = False
+        else:
+            self.connected = True
+            self.setaddress(address)
+
+    def __connectport(self, serialport, baudrate, address):
+        try:
+            iface = serial.Serial(serialport, baudrate, bytesize=8, \
+                                       stopbits=1, parity=serial.PARITY_NONE, \
+                                       timeout=1, xonxoff=0, rtscts=0, dsrdtr=0)
+            return iface
+        except:
+            return None
+        
 
     def setaddress(self, address):
         """ Set address to talk to
