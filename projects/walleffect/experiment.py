@@ -39,7 +39,9 @@ class appGui:
         self.cont = cont
         self.moveenabled = False
         dirname = os.path.dirname(sys.argv[0])
-        gladefile = dirname + "/experiment02.glade"
+        if dirname != '' and os.name == 'nt':
+            dirname += '/'
+        gladefile = dirname + "experiment02.glade"
         self.windowname = "window1" 
         self.wTree = gtk.glade.XML(gladefile, self.windowname)
         dic = {"on_mainWindow_destroy" : gtk.main_quit}
@@ -255,11 +257,12 @@ class appGui:
 
 if (__name__ == '__main__'):
     dirname = os.path.dirname(sys.argv[0])
-    cont = transstage.MotorControl('COM9')
+    if dirname != '' and os.name == 'nt':
+        dirname += '/'
 
     splash = gtk.Window()
     splashimg = gtk.Image()
-    splashimg.set_from_file(dirname+'/splash.svg')
+    splashimg.set_from_file(dirname+'splash.svg')
     splash.add(splashimg)
     splash.show_all()
     # Needed to display splash during the setup sequence
@@ -267,7 +270,7 @@ if (__name__ == '__main__'):
         gtk.main_iteration()
     try:
         config = ConfigParser.RawConfigParser()
-        config.read(dirname+'/stage.conf')
+        config.read(dirname+'stage.conf')
         section = 'PID'
         for opt in config.options(section):
             print "Set %s -> %s" %(opt, config.get(section, opt))
