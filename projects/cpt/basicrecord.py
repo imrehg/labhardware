@@ -27,7 +27,10 @@ clockscan = [config.getfloat('Experiment','scanstart'),
              config.getfloat('Experiment','scanstop')]
 scansteps = config.getint('Experiment','scansteps')
 repeats = config.getint('Experiment','repeats')
+# Check Manual for the meaning of these integers: pages 5-13 and 5-6
+lockinsensitivity = config.getint('Experiment','lockinsensitivity')
 lockinrate = config.getint('Experiment','lockinrate')
+lockintimeconstant = config.getint('Experiment','lockintimeconstant')
 
 logger = logging.getLogger()
 logfile = config.get('Setup','logfile')
@@ -53,8 +56,10 @@ for quest in q:
 
 lockin.write("REST")
 lockin.write("SRAT %d" %(lockinrate))
+lockin.write("OFLT %d" %(lockintimeconstant))
+lockin.write("SENS %d" %(lockinsensitivity))
 lockin.write("FAST 0")
-q = ["SRAT?", "SPTS?", "SEND?"]
+q = ["SRAT?", "SPTS?", "SEND?", "OFLT?", "SENS?"]
 for quest in q:
     print quest, "->", lockin.ask(quest)
 
