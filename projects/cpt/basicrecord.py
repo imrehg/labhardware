@@ -31,6 +31,7 @@ repeats = config.getint('Experiment','repeats')
 lockinsensitivity = config.getint('Experiment','lockinsensitivity')
 lockinrate = config.getint('Experiment','lockinrate')
 lockintimeconstant = config.getint('Experiment','lockintimeconstant')
+startdelay = config.getfloat('Experiment','startdelay')
 
 logger = logging.getLogger()
 logfile = config.get('Setup','logfile')
@@ -73,7 +74,7 @@ for index, scanning in enumerate(ss):
     print "Detuning %d / %d: %f Hz" %(index+1, scansteps, scanning) 
     synth.write("FREQ:CW %f HZ" %(freq/synthdivider))
     # Let it settle
-    sleep(1)
+    sleep(startdelay)
     lockin.write("REST")
     lockin.write("STRT")
     # Wait until there's enough data
