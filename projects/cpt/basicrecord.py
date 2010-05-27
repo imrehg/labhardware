@@ -32,6 +32,8 @@ lockinsensitivity = config.getint('Experiment','lockinsensitivity')
 lockinrate = config.getint('Experiment','lockinrate')
 lockintimeconstant = config.getint('Experiment','lockintimeconstant')
 startdelay = config.getfloat('Experiment','startdelay')
+lockinch1 = config.getfloat('Experiment','lockinch1')
+lockinch2 = config.getfloat('Experiment','lockinch2')
 
 logger = logging.getLogger()
 logfile = config.get('Setup','logfile')
@@ -59,6 +61,9 @@ lockin.write("REST")
 lockin.write("SRAT %d" %(lockinrate))
 lockin.write("OFLT %d" %(lockintimeconstant))
 lockin.write("SENS %d" %(lockinsensitivity))
+lockin.write("DDEF1,%d,0" %(lockinch1))
+lockin.write("DDEF2,%d,0" %(lockinch2))
+
 lockin.write("FAST 0")
 q = ["SRAT?", "SPTS?", "SEND?", "OFLT?", "SENS?"]
 for quest in q:
@@ -81,8 +86,10 @@ for index, scanning in enumerate(ss):
     while (int(lockin.ask("SPTS?")) < repeats):
         sleep(0.5)
     lockin.write("PAUS")
-    temp = lockin.ask("TRCA?1,0,%d" %(repeats))
-    temp2 = array([float(x) for x in temp.split(',')[0:-1]])
+    tempch1 = lockin.ask("TRCA?1,0,%d" %(repeats))
+    tempoutch1 = array([float(x) for x in tempch1.split(',') if not (x == '')])
+    tempch2 = lockin.ask("TRCA?2,0,%d" %(repeats))
+    tempoutch2 = array([float(x) for x in tempch2.split(',') if not (x == '')])
     results[index, 0:2] = [freq, average(temp2)]
-    for measure in temp2:
-        logger.info("%1.3f,%e" %(freq, measure))
+    for index in xrange(repeats):
+        logger.info("%1.3f,%e,%e" %(freq, tempoutch1[index], tempoutch2[index]))
