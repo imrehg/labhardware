@@ -73,7 +73,6 @@ print ">>>>>>>>>>>>>>>>>>>>>>>>>>>"
 logging.info("#AimedClockFrequency(Hz) LockInSignal(V)")
 
 ss = linspace(clockscan[0],clockscan[1],scansteps)
-results = zeros((scansteps, 2))
 for index, scanning in enumerate(ss):
     freq = clock + scanning
     print "Detuning %d / %d: %f Hz" %(index+1, scansteps, scanning) 
@@ -90,6 +89,5 @@ for index, scanning in enumerate(ss):
     tempoutch1 = array([float(x) for x in tempch1.split(',') if not (x == '')])
     tempch2 = lockin.ask("TRCA?2,0,%d" %(repeats))
     tempoutch2 = array([float(x) for x in tempch2.split(',') if not (x == '')])
-    results[index, 0:2] = [freq, average(temp2)]
     for index in xrange(repeats):
         logger.info("%1.3f,%e,%e" %(freq, tempoutch1[index], tempoutch2[index]))
