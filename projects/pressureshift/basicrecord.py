@@ -107,8 +107,7 @@ for index, scanning in enumerate(ss):
 
     # Set and read back function generator frequency for scanning
     funcgen.write(":FREQ%d %f" %(amchannel, aomcentre+scanning))
-    setfreq = float(funcgen.ask(":FREQ%d?" %(amchannel)))
-    # setfreq = float(funcgen.ask(":FREQ%d?" %(amchannel))) - aomcentre
+    setfreq = float(funcgen.ask(":FREQ%d?" %(amchannel))) - aomcentre
     sleep(startdelay)
 
     # Counter 
