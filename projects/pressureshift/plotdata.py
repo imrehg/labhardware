@@ -4,7 +4,7 @@ from ourgui import openFile
 
 filename = openFile(type='log')
 
-f, beat, r, th = loadtxt(filename, comments='#', delimiter=',', unpack=True)
+f, r, th = loadtxt(filename, comments='#', delimiter=',', unpack=True)
 
 # Check how many repetitions are there
 n = 0
@@ -27,9 +27,18 @@ for i in xrange(0, points):
         favgs.append(f[i*repeats])
     except:
         break
+favgs = array(favgs)
 
-plot(f, r, '.')
-errorbar(favgs, avgs, yerr=errbar, elinewidth=3, capsize=6)
-xlabel('Detuning (Hz)')
+figure(1)
+subplot('211')
+plot(f/1e3, r, '.')
+errorbar(favgs/1e3, avgs, yerr=errbar, elinewidth=3, capsize=6)
+xlim(f[0]/1e3,f[-1]/1e3)
+xlabel('Detuning (kHz)')
 ylabel('Lock-in signal')
+subplot('212')
+plot(f/1e3, th/180, '.')
+xlim(f[0]/1e3,f[-1]/1e3)
+xlabel('Detuning (kHz)')
+ylabel('Phase')
 show()
