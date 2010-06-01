@@ -74,8 +74,8 @@ f.close()
 
 # Setup instruments
 # Function generator
-funcgen.write(":FREQ1 %f" %(aomcentre))
-funcgen.write(":VOLTAGE1:AMPLITUDE %fmVpp" %(aomamp[0]))
+#funcgen.write(":FREQ1 %f" %(aomcentre))
+#funcgen.write(":VOLTAGE1:AMPLITUDE %fmVpp" %(aomamp[0]))
 funcgen.write(":FREQ2 %f" %(aomcentre))
 funcgen.write(":VOLTAGE2:AMPLITUDE %fmVpp" %(aomamp[1]))
 funcgen.write(":AM%d:DEPTH %dPCT" %(amchannel, amdepth))
