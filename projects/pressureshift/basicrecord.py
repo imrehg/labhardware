@@ -31,7 +31,7 @@ def checklock(beatfreq, setfreq):
 
 # Import configuration and do basic setup
 funcgen = agilent81150.Agilent81150(config.getint('Setup','funcgen_GPIB'))
-counter = agilentcounter.AgilentCounter(config.getint('Setup','counter_GPIB'))
+#counter = agilentcounter.AgilentCounter(config.getint('Setup','counter_GPIB'))
 lockin = stanfordSR830.StanfordSR830(config.getint('Setup','lockin_GPIB'))
 
 # Get settings from config file
@@ -81,10 +81,10 @@ funcgen.write(":VOLTAGE2:AMPLITUDE %fmVpp" %(aomamp[1]))
 funcgen.write(":AM%d:DEPTH %dPCT" %(amchannel, amdepth))
 funcgen.write(":AM%d:INT:FREQUENCY %f" %(amchannel, amfrequency))
 funcgen.write(":AM%d:STATE On" %(amchannel))
-# Frequency counter
-counter.reset()
-counter.setupFast()
-counter.setupGating(countergate)
+# # Frequency counter
+# counter.reset()
+# counter.setupFast()
+# counter.setupGating(countergate)
 # Lock-in amplifier
 lockin.write("REST")
 lockin.write("SRAT %d" %(lockinrate))
@@ -110,8 +110,8 @@ for index, scanning in enumerate(ss):
     setfreq = float(funcgen.ask(":FREQ%d?" %(amchannel))) - aomcentre
     sleep(startdelay)
 
-    # Counter 
-    counter.initMeasure()
+    # # Counter 
+    # counter.initMeasure()
 
     # Lock-in amplifier measurement
     lockin.write("REST")
@@ -125,9 +125,10 @@ for index, scanning in enumerate(ss):
     tempch2 = lockin.ask("TRCA?2,0,%d" %(repeats))
     tempoutch2 = array([float(x) for x in tempch2.split(',') if not (x == '')])
 
-    beatfreq = counter.getFreq()
+    # beatfreq = counter.getFreq()
 
-    checklock(beatfreq, setfreq)
+    # checklock(beatfreq, setfreq)
 
     for index in xrange(repeats):
-        logger.info("%.3f,%.3f,%e,%e" %(setfreq, beatfreq, tempoutch1[index], tempoutch2[index]))
+#        logger.info("%.3f,%.3f,%e,%e" %(setfreq, beatfreq, tempoutch1[index], tempoutch2[index]))
+        logger.info("%.3f,%e,%e" %(setfreq, tempoutch1[index], tempoutch2[index]))
