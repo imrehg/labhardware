@@ -17,11 +17,12 @@ except:
     print "Cannot find configuration file."
     sys.exit(1)
 
-# Import configuration and do basic setup
+# Connect to equipment
 synth = agilent8644.Agilent8644(config.getint('Setup','synth_GPIB'))
 lockin = stanfordSR830.StanfordSR830(config.getint('Setup','lockin_GPIB'))
-synthdivider = config.getint('Setup','synthdivider')
 
+# Import configuration and do basic setup
+synthdivider = config.getint('Setup','synthdivider')
 clock =  config.getfloat('Setup','clock')
 clockscan = [config.getfloat('Experiment','scanstart'),
              config.getfloat('Experiment','scanstop')]
@@ -35,6 +36,7 @@ startdelay = config.getfloat('Experiment','startdelay')
 lockinch1 = config.getfloat('Experiment','lockinch1')
 lockinch2 = config.getfloat('Experiment','lockinch2')
 
+# Setup output file
 logger = logging.getLogger()
 logfile = config.get('Setup','logfile')
 if logfile == 'auto':
@@ -53,6 +55,7 @@ f.close()
 
 synth.write("FREQ:CW %f HZ" %(clock/synthdivider))
 
+# Query synthetizer settings
 q = ["FREQ:CW?"]
 for quest in q:
     print quest, "->", synth.ask(quest)
@@ -68,8 +71,9 @@ lockin.write("IGND 1")
 lockin.write("ICPL 0")
 lockin.write("ILIN 3")
 lockin.write("OFSL 1")
-
 lockin.write("FAST 0")
+
+# Query lockin settings
 q = ["SRAT?", "SPTS?", "SEND?", "OFLT?", "SENS?"]
 for quest in q:
     print quest, "->", lockin.ask(quest)
