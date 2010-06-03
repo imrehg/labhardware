@@ -63,6 +63,11 @@ lockin.write("OFLT %d" %(lockintimeconstant))
 lockin.write("SENS %d" %(lockinsensitivity))
 lockin.write("DDEF1,%d,0" %(lockinch1))
 lockin.write("DDEF2,%d,0" %(lockinch2))
+# Set standard values for the input and filtering
+lockin.write("IGND 1")
+lockin.write("ICPL 0")
+lockin.write("ILIN 3")
+lockin.write("OFSL 1")
 
 lockin.write("FAST 0")
 q = ["SRAT?", "SPTS?", "SEND?", "OFLT?", "SENS?"]
