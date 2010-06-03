@@ -75,7 +75,7 @@ for quest in q:
     print quest, "->", lockin.ask(quest)
 
 print ">>>>>>>>>>>>>>>>>>>>>>>>>>>"
-logging.info("#AimedClockFrequency(Hz) LockInSignal(V)")
+logging.info("#AimedClockFrequency(Hz) LockInSignal(A) LockInPhase(Deg)")
 
 ss = linspace(clockscan[0],clockscan[1],scansteps)
 for index, scanning in enumerate(ss):
