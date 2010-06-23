@@ -10,7 +10,7 @@ class PowerMeter():
         if os.name == "posix":
             portbase = '/dev/ttyUSB'
         else:
-            portbase == 'COM'
+            portbase = 'COM'
 
         for i in xrange(10):
             try:
