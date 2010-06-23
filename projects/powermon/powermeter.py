@@ -41,7 +41,11 @@ class PowerMeter():
     def getReading(self):
         self.sendCom("D?")
         value = self.readReply();
-        return(float(value))
+        try:
+            fvalue = float(value)
+        except:
+            fvalue = None
+        return(fvalue)
 
 if __name__ == "__main__":
     powermeter = PowerMeter()
