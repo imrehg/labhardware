@@ -1,15 +1,20 @@
 #!/usr/bin/env python
 
 import serial
-import sys
+import os
 
 class PowerMeter():
+    """ Newport Optical Power Meter 1830-C """
 
     def __init__(self):
-        portbase = 'COM'
+        if os.name == "posix":
+            portbase = '/dev/ttyUSB'
+        else:
+            portbase == 'COM'
+
         for i in xrange(10):
             try:
-                self.ser = serial.Serial("%s%d" %(porbase, i),
+                self.ser = serial.Serial("%s%d" %(portbase, i),
                                          baudrate=9600,
                                          bytesize=8,
                                          stopbits=1,
@@ -24,7 +29,8 @@ class PowerMeter():
         if self.ser is None:
             print "No connection..."
             return None
-
+        else:
+            print "Powermeter connected"
 
     def sendCom(self, command):
         self.ser.write("%s\n" % (command))
@@ -34,10 +40,8 @@ class PowerMeter():
 
     def getReading(self):
         self.sendCom("D?")
-        value = float(self.readReply());
-        return(value)
+        value = self.readReply();
+        return(float(value))
 
 if __name__ == "__main__":
-    print "Now?"
     powermeter = PowerMeter()
-    print "Yeah!"
