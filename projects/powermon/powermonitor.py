@@ -17,7 +17,7 @@ logger.setLevel(logging.INFO)
 
 start = time()
 # Logging timestep 
-tstep = 0.1
+tstep = 0.5
 
 while True:
     try:
