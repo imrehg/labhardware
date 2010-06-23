@@ -26,7 +26,7 @@ while True:
         now = time()
         fvalue = meter.getReading()
         print "%.3fs -> %e W" %((now-start), fvalue)
-        logger.info("%f, %e" %(now, fvalue))
+        logger.info("%f,%e" %(now, fvalue))
         start = now
     except (KeyboardInterrupt):
         print "Logging finished"
