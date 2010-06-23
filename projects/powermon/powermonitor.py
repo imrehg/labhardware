@@ -15,6 +15,7 @@ hdlr.setFormatter(formatter)
 logger.addHandler(hdlr)
 logger.setLevel(logging.INFO) 
 
+logger.info("#Time (Epoch), Optical power (W)")
 start = time()
 # Logging timestep 
 tstep = 0.5
