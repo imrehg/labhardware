@@ -1,0 +1,12 @@
+[Setup]
+funcgen_GPIB: 14
+logfile: auto
+[Experiment]
+lockinch1: 1
+aomcentre: 78000000
+amchannel: 1
+scanstart: -100000
+scanstop:   100000
+scansteps: 5
+timestep: 0.5
+repeats: 10
