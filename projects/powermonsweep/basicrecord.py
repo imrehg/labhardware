@@ -82,6 +82,9 @@ for index, scanning in enumerate(ss):
             continue
         now = time()
         fvalue = meter.getReading()
+        # Sometimes the powermeter fails to answer, don't fail for that...
+        if fvalue is None:
+            continue
         print "%.3fs -> %e W" %((now-start), fvalue)
         logger.info("%.3f,%e" %(setfreq, fvalue))
         start = now
