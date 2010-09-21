@@ -7,11 +7,11 @@ logfile: auto
 [Experiment]
 lockinch1: 1
 lockinch2: 1
-scanstart: -5
-scanstop: 5
-scansteps: 5
-repeats: 10
+scanstart: -200
+scanstop: 200
+scansteps: 401
+repeats: 32
 lockinrate: 8
 lockintimeconstant: 7
-lockinsensitivity: 21
-startdelay: 2
+lockinsensitivity: 22
+startdelay: 1
