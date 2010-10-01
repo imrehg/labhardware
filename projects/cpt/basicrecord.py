@@ -36,6 +36,20 @@ startdelay = config.getfloat('Experiment','startdelay')
 lockinch1 = config.getfloat('Experiment','lockinch1')
 lockinch2 = config.getfloat('Experiment','lockinch2')
 
+if lockinch1 == 0:
+    ch1name = "Xcurrent(A)"
+elif lockinch1 == 1:
+    ch1name = "Rcurrent(A)"
+else:
+    ch1name = "Ch1/Choice%d" %lockinch1
+
+if lockinch2 == 0:
+    ch2name = "Ycurrent(A)"
+elif lockinch2 == 1:
+    ch2name = "PhaseAngle(Deg)"
+else:
+    ch2name = "Ch2/Choice%d" %lockinch2
+
 # Setup output file
 logger = logging.getLogger()
 logfile = config.get('Setup','logfile')
@@ -79,7 +93,9 @@ for quest in q:
     print quest, "->", lockin.ask(quest)
 
 print ">>>>>>>>>>>>>>>>>>>>>>>>>>>"
-logging.info("#AimedClockFrequency(Hz) LockInSignal(A) LockInPhase(Deg)")
+reffreq = float(lockin.ask("FREQ?"))
+logging.info("# Reference frequency: %f Hz" %reffreq)
+logging.info("#AimedClockFrequency(Hz) %s %s" %(ch1name, ch2name))
 
 ss = linspace(clockscan[0],clockscan[1],scansteps)
 for index, scanning in enumerate(ss):
