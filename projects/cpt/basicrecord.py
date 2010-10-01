@@ -88,7 +88,7 @@ lockin.write("OFSL 1")
 lockin.write("FAST 0")
 
 # Query lockin settings
-q = ["SRAT?", "SPTS?", "SEND?", "OFLT?", "SENS?"]
+q = ["SRAT?", "SPTS?", "SEND?", "OFLT?", "SENS?", "FREQ?"]
 for quest in q:
     print quest, "->", lockin.ask(quest)
 
