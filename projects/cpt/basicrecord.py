@@ -53,7 +53,7 @@ for line in f:
     logger.info("# %s" %line.strip())
 f.close()
 
-synth.write("FREQ:CW %f HZ" %(clock/synthdivider))
+synth.write("FREQ:CW %f HZ" %((clock+clockscan[0])/synthdivider))
 
 # Query synthetizer settings
 q = ["FREQ:CW?"]
