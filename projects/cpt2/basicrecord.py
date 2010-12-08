@@ -75,8 +75,6 @@ measure.configure_timing_sample_clock(rate = measurefreq,
 
 
 print ">>>>>>>>>>>>>>>>>>>>>>>>>>>"
-reffreq = float(lockin.ask("FREQ?"))
-logging.info("# Reference frequency: %f Hz" %reffreq)
 logging.info("#AimedClockFrequency(Hz) Translight(V) Fluolight(V)")
 
 ####### Let's get to it
