@@ -38,7 +38,7 @@ startdelay = config.getfloat('Experiment','startdelay')
 logger = logging.getLogger()
 logfile = config.get('Setup','logfile')
 if logfile == 'auto':
-    logfile = "cpt_%s.log" %(strftime("%y%m%d_%H%M%S"))
+    logfile = "cpt2_%s.log" %(strftime("%y%m%d_%H%M%S"))
 hdlr = logging.FileHandler(logfile)
 formatter = logging.Formatter('%(message)s')
 hdlr.setFormatter(formatter)
