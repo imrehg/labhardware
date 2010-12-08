@@ -63,8 +63,15 @@ for quest in q:
 ###############
 # Setup DAQ channnels
 measure = nidaqmx.AnalogInputTask()
-measure.create_voltage_channel(['%s/%s' %(daqdevice, transch),
-                                '%s/%s' %(daqdevice, fluoch)],
+# measure.create_voltage_channel(['%s/%s' %(daqdevice, transch),
+#                                 '%s/%s' %(daqdevice, fluoch)],
+# measure.create_voltage_channel('%s/%s' %(daqdevice, transch),
+measure.create_voltage_channel('Dev2/ai0',
+                               terminal = 'diff',
+                               units='volts',
+                               min_val=0,
+                               max_val=10.0)
+measure.create_voltage_channel('Dev2/ai1',
                                terminal = 'diff',
                                units='volts',
                                min_val=0,
@@ -89,7 +96,8 @@ for index, scanning in enumerate(ss):
     measure.start()
     measure.wait_until_done(timeout=-1)
     data = measure.read(samples_per_channel=repeats,timeout=10,fill_mode='group_by_scan_number')
+    measure.stop()
 
     print data
-    for index in xrange(0, 2*repeat, 2):
-        logger.info("%1.3f,%e,%e" %(freq, data[index], data[index+1]))
+    for volts in data:
+        logger.info("%1.3f,%e,%e" %(freq, volts[0], volts[1]))
