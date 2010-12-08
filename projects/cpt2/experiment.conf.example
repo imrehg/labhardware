@@ -3,7 +3,7 @@ clock: 9192631770
 synth_GPIB: 7
 synthdivider: 20
 logfile: auto
-deviceID:
+deviceID: Dev2
 transchID: ai0
 fluochID: ai1
 [Experiment]
