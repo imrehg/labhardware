@@ -93,11 +93,12 @@ for index, scanning in enumerate(ss):
     # Let things settle
     sleep(startdelay)
 
+    # Do actual measurememt
     measure.start()
     measure.wait_until_done(timeout=-1)
     data = measure.read(samples_per_channel=repeats,timeout=10,fill_mode='group_by_scan_number')
     measure.stop()
 
-    print data
+    # Write out log
     for volts in data:
         logger.info("%1.3f,%e,%e" %(freq, volts[0], volts[1]))
