@@ -1,0 +1,2 @@
+set PYTHONPATH=%PYTHONPATH%;D:\labhardware\drivers\ 
+c:\python26\python.exe connectiontest.py experiment.conf.example

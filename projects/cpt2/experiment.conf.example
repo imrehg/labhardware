@@ -1,0 +1,14 @@
+[Setup]
+clock: 9192631770
+synthdivider: 20
+logfile: auto
+deviceID:
+transchID: ai0
+fluochID: ai1
+[Experiment]
+scanstart: -200
+scanstop: 200
+scansteps: 401
+repeats: 32
+measurefreq: 32
+startdelay: 1

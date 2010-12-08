@@ -1,0 +1,12 @@
+[Setup]
+funcgen_GPIB: 10
+multimeter_GPIB: 6
+counter_GPIB: 1
+logfile: auto
+[Experiment]
+voltagerange: 1
+countergating: 0.01
+scanstart: 0.100
+scanstop: 0.150
+scansteps: 101
+startdelay: 0.1
