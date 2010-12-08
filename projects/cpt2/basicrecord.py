@@ -63,9 +63,9 @@ for quest in q:
 # Setup DAQ channnels
 measure = nidaqmx.AnalogInputTask()
 measure.create_voltage_channel(['%s/%s' %(daqdevice, transch),
-                                '%s/%s' %(daqdevice, fluoch)]
+                                '%s/%s' %(daqdevice, fluoch)],
                                terminal = 'diff',
-                               units='volts'
+                               units='volts',
                                min_val=0,
                                max_val=10.0)
 measure.configure_timing_sample_clock(rate = measurefreq,
