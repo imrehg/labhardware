@@ -9,7 +9,7 @@ import nidaqmx
 try:
     import configparser as ConfigParser
 except ImportError:
-    import Configparser
+    import ConfigParser
 
 try:
     configfile = sys.argv[1]
