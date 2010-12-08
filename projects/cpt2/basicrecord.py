@@ -5,7 +5,7 @@ from numpy import *
 import sys
 import logging
 import nidaqmx
-
+import agilent8644
 try:
     import configparser as ConfigParser
 except ImportError:
@@ -20,6 +20,7 @@ except:
     sys.exit(1)
 
 # Connect to equipment
+synth = agilent8644.Agilent8644(config.getint('Setup','synth_GPIB'))
 daqdevice = config.get('Setup','deviceID')
 transch = config.get('Setup','transchID')
 fluoch = config.get('Setup','fluochID')

@@ -1,5 +1,6 @@
 [Setup]
 clock: 9192631770
+synth_GPIB: 7
 synthdivider: 20
 logfile: auto
 deviceID:
