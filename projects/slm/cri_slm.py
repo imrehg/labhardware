@@ -4,25 +4,52 @@
 #
 
 import serial
+import os
 
 class SLM:
     """
     Spatial Light Modulator
     """
 
-    def __init__(self, serialport):
+    def __init__(self, serialport=None):
         """ Create motor controller serial interface
         Input:
         serialport : name of the serial port (eg. '/dev/ttyUSB0' or 'COM1')
         """
-        self.iface = serial.Serial(serialport, baudrate=460800, bytesize=8, \
-                                   stopbits=1, parity=serial.PARITY_NONE, \
-                                   timeout=10, xonxoff=0, rtscts=0, dsrdtr=0)
         self.termchar = "\r"
+        if (serialport is None):
+            if (os.name == 'nt'):
+                serialbase = "COM"
+                serialnumstart = 1
+            else:
+                serialbase = "/dev/ttyUSB"
+                serialnumstart = 0
+            for i in xrange(serialnumstart, 20):
+                serialport = "%s%d" %(serialbase,i)
+                self.iface = self.__connectport(serialport)
+                if not (self.iface is None) and self.getversion():
+                    break
+        else:
+            self.iface = self.__connectport(serialport)
+
+        if self.iface is None:
+            print("Not connected...")
+        else:
+            print("Translation stage connected on %s" %(serialport))
+
         self._NMask = 2
         self._NFrame = 128
         self._NElement = 128
         self._MaxValue = 4096
+
+    def __connectport(self, serialport):
+        try:
+            iface = serial.Serial(serialport, baudrate=460800, bytesize=8, \
+                                      stopbits=1, parity=serial.PARITY_NONE, \
+                                      timeout=10, xonxoff=0, rtscts=0, dsrdtr=0)
+        except:
+            iface = None
+        return iface
 
     def set(self, command):
         """ Send command to controller, and read answer if there's any
@@ -95,3 +122,6 @@ class SLM:
                 
     def activeframe(self, frame):
         self.set("P %d" %frame)
+
+    def getversion(self):
+        return self._cmdproto('V', '?')
