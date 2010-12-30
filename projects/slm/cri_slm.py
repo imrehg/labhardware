@@ -89,13 +89,13 @@ class SLM:
 
     def blockset(self, values):
         if len(values) <> self._NElement:
-            return
+            return(1)
         out = ""
         for i in range(self._NElement):
             out += chr(int(values[i]%256))+chr(int(values[i]/256))
         self.set("B1")
         self.iface.write(out)
-        return
+        return(0)
 
     def cmdmask(self, command):
         return self._cmdproto('M', command)
