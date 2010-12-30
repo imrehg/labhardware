@@ -34,7 +34,9 @@ class appGui:
         self._saved = None
         self.moveenabled = False
         dirname = os.path.dirname(sys.argv[0])
-        gladefile = dirname + "/simple.glade"
+        if len(dirname) >  0:
+            dirname += "/"
+        gladefile = dirname + "simple.glade"
         self.windowname = "window1"
         self.wTree = gtk.glade.XML(gladefile, self.windowname)
         dic = {"on_mainWindow_destroy" : gtk.main_quit}
