@@ -23,8 +23,7 @@ import cri_slm
 import ourgui
 
 if __name__ == "__main__":
-    dirname = os.path.dirname(sys.argv[0])
-    slm = cri_slm.SLM('COM8')
+    slm = cri_slm.SLM()
 
     try:
         config = ConfigParser.RawConfigParser()
