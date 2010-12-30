@@ -92,7 +92,7 @@ class SLM:
             return
         out = ""
         for i in range(self._NElement):
-            out += chr(values[i]%256)+chr(values[i]/256)
+            out += chr(int(values[i]%256))+chr(int(values[i]/256))
         self.set("B1")
         self.iface.write(out)
         return
