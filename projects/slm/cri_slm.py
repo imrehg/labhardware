@@ -35,7 +35,7 @@ class SLM:
         if self.iface is None:
             print("Not connected...")
         else:
-            print("Translation stage connected on %s" %(serialport))
+            print("Spatial Light Modulator connected on %s" %(serialport))
 
         self._NMask = 2
         self._NFrame = 128
