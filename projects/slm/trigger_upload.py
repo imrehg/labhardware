@@ -52,8 +52,22 @@ if __name__ == "__main__":
         data[:,i] = temp
 
     # Upload data frame-by-frame
+    print "Upload data..."
+    slm.cmdmask("0");
     for i in xrange(128):
-        slm.activeframe(i);
-        slm.blockset(data[:, i % ninput])
+        slm.cmdframe("%d" %i);
+        slm.blockset(data[:, i % ninput].tolist())
+
+    ## Clear the other mask
+    print "Clear other mask..."
+    slm.cmdmask("1");
+    for i in xrange(128):
+        slm.cmdframe("%d" %i);
+        slm.clearframe();
+    slm.cmdframe("0");
+
+    ## Go back to the beginning
+    slm.cmdmask("0");
+    slm.cmdframe("0");
 
     print "Done"
