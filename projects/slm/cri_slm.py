@@ -65,7 +65,11 @@ class SLM:
 
     def _cmdproto(self, target, command):
         if  command == '?':
-            return int(self.query(target+command).split()[1])
+            try:
+                answer = int(self.query(target+command).split()[1])
+            except:
+                answer = None
+            return answer
         else:
             try:
                 c = int(command)
