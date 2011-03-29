@@ -59,7 +59,7 @@ if __name__ == "__main__":
         start = time()
         counter.setupAllan(channel=ch, gatetime=gatetime, counts=counts)
         counter.write("INIT")
-        print "Averaging time: %g s" %(gatetime)
+        print "Gating time: %g s" %(gatetime)
 
         if (gatetime*counts > 2):
             stoptime = start + gatetime*counts -1
