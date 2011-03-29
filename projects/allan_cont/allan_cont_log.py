@@ -42,9 +42,7 @@ if __name__ == "__main__":
 
     # Setup output file
     logger = logging.getLogger()
-    logfile = config.get('Setup','logfile')
-    if logfile == 'auto':
-        logfile = "allan_%s.log" %(strftime("%y%m%d_%H%M%S"))
+    logfile = "allan_%s.log" %(strftime("%y%m%d_%H%M%S"))
     hdlr = logging.FileHandler(logfile)
     formatter = logging.Formatter('%(message)s')
     hdlr.setFormatter(formatter)
