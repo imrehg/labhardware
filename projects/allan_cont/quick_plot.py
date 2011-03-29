@@ -8,6 +8,7 @@ def plotData(filename):
     pl.loglog(gatetime, allanvar, '.-')
     pl.xlabel("Gate time (s)")
     pl.ylabel("Allan deviation (Hz)")
+    pl.xlim([min(gatetime), max(gatetime)])
     pl.show()
 
 if __name__ == "__main__":
