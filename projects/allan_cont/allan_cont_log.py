@@ -7,6 +7,7 @@ import numpy as np
 import ConfigParser as cp
 import sys
 import re
+import logging
 
 from agilent53230 import Counter
 
@@ -39,13 +40,23 @@ if __name__ == "__main__":
     gates = np.logspace(np.log10(mintime), np.log10(maxtime), steps)
 
 
-    datafile = "allan_%s.log" %(strftime("%y%m%d_%H%M%S"))
-    out = file(datafile, 'a')
-    out.write("#Gatetime(s) AllanDev(Hz)\n")
+    # Setup output file
+    logger = logging.getLogger()
+    logfile = config.get('Setup','logfile')
+    if logfile == 'auto':
+        logfile = "allan_%s.log" %(strftime("%y%m%d_%H%M%S"))
+    hdlr = logging.FileHandler(logfile)
+    formatter = logging.Formatter('%(message)s')
+    hdlr.setFormatter(formatter)
+    logger.addHandler(hdlr)
+    logger.setLevel(logging.INFO)
+
+    # Write header
+    logger.info("#Gatetime(s) AllanDev(Hz)")
 
     for gatetime in gates:
 
-        start = time()        
+        start = time()
         counter.setupAllan(channel=ch, gatetime=gatetime, counts=counts)
         counter.write("INIT")
         print "Averaging time: %g s" %(gatetime)
@@ -56,15 +67,11 @@ if __name__ == "__main__":
                 try:
                     sleep(0.1)
                 except KeyboardInterrupt:
-                    out.close()
                     print "Interrupt by user"
                     sys.exit(1)
-        
+
         allan = counter.write("*WAI")
         # Ask for the result, this also starts the next measurement
         allan = float(counter.ask("CALC:AVER:ADEV?"))
         print("Allan deviation: %g Hz" %(allan))
-        result = np.array([[gatetime, allan]])
-        np.savetxt(out, result)
-    out.close()
-
+        logger.info("%e,%e" %(gatetime, allan))
