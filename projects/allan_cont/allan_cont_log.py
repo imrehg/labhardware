@@ -49,7 +49,16 @@ if __name__ == "__main__":
     logger.addHandler(hdlr)
     logger.setLevel(logging.INFO)
 
-    # Write header
+    # Write settings/data header
+    logger.info("#Allan w/ Agilent 53230, settings:")
+    settings = {'Channel number':ch,
+                'Minimum gating time':mintime,
+                'Maximum gating time':maxtime,
+                'Number of gating times':steps,
+                'Number of readings each:':counts,
+                }
+    for setting, value in settings.items():
+        logger.info("#%s : %s" %(setting, value))
     logger.info("#Gatetime(s) AllanDev(Hz)")
 
     for gatetime in gates:
