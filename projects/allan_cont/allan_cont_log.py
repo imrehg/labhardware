@@ -59,7 +59,7 @@ if __name__ == "__main__":
                 }
     for setting, value in settings.items():
         logger.info("#%s : %s" %(setting, value))
-    logger.info("#Gatetime(s) AllanDev(Hz)")
+    logger.info("#Gatetime(s) AllanDev(Hz) AverageFq(Hz) MinFq(Hz) MaxFq(Hz)")
 
     for gatetime in gates:
 
@@ -80,5 +80,8 @@ if __name__ == "__main__":
         allan = counter.write("*WAI")
         # Ask for the result, this also starts the next measurement
         allan = float(counter.ask("CALC:AVER:ADEV?"))
+        avgfq = float(counter.ask("CALC:AVER:AVER?"))
+        minfq = float(counter.ask("CALC:AVER:MIN?"))
+        maxfq = float(counter.ask("CALC:AVER:MAX?"))
         print("Allan deviation: %g Hz" %(allan))
-        logger.info("%e,%e" %(gatetime, allan))
+        logger.info("%e,%e,%.5f,%.5f,%.5f" %(gatetime, allan, avgfq, minfq, maxfq))
