@@ -4,7 +4,10 @@ import ConfigParser
 import logging
 import numpy
 import sys
+
+# Device drivers
 import sma100a
+import stanfordSR830
 
 try:
     configfile = sys.argv[1]
@@ -15,7 +18,9 @@ except:
     sys.exit(1)
 
 # Initial setup
-siggen = sma100a.SMA100A(config.getint('Setup','GPIB'))
+siggen = sma100a.SMA100A(config.getint('Setup','siggen_GPIB'))
+lockin = stanfordSR830.StanfordSR830(config.getint('Setup','lockin_GPIB'))
+
 siggen.rfoff()
 result = siggen.reset()
 print "Reset result: %s" %(result)
@@ -27,6 +32,8 @@ eomscan = [config.getfloat('Experiment', 'scanstart'),
 eomscansteps = config.getint('Experiment', 'scansteps')
 rfpower = config.getfloat('Experiment', 'rfpower')
 delay = config.getfloat('Experiment', 'delay')
+lffreq = config.getfloat('Experiment', 'lffreq')
+fmdev = config.getfloat('Experiment', 'fmdev')
 
 # # Setup logging
 # logger = logging.getLogger()
@@ -45,12 +52,20 @@ delay = config.getfloat('Experiment', 'delay')
 #     logger.info("# %s" %line.strip())
 # f.close()
 
-ss = numpy.linspace(eomscan[0], eomscan[1], eomscansteps)
-
+# Setting up the experiment with FM modulation
+siggen.write(":SOUR:MODE CW")
 siggen.setFrequency(eomcenter + ss[0])
 siggen.setPower(rfpower)
+siggen.write(":LFO:FREQ %.1f" %(lffreq))
+siggen.write(":LFO:FREQ:MODE CW")
+siggen.write(":FM:DEV %.1f" %(fmdev))
+siggen.write(":FM:STAT ON")
 siggen.rfon()
+siggen.write("*OPC?")
 
+# Setup lock-in amplifier to get a number of datapoints in one go
+
+ss = numpy.linspace(eomscan[0], eomscan[1], eomscansteps)
 print "Frequency center: %.2f Hz" %(eomcenter)
 for index, scanning in enumerate(ss):
     print "Detuning %d / %d: %.2f Hz" %(index+1, eomscansteps, scanning) 
@@ -61,3 +76,12 @@ for index, scanning in enumerate(ss):
 
     # This is not meant for synchronization...
     sleep(delay)
+
+    # Delay for signal generator
+    # Set delay for lock-in
+
+    # wait until lock-in finishes
+
+    # get data
+
+    # save data

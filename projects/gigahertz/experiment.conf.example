@@ -1,10 +1,13 @@
 [Setup]
-GPIB: 28
+siggen_GPIB: 28
+lockin_GPIB: 8
 logfile: auto
 [Experiment]
+rfpower: 12
+delay: 1
 freqcenter: 9192631770
 scanstart: -100000
-scanstop:   100000
-scansteps: 5
-rfpower: 10
-delay: 5
+scanstop: 100000
+scansteps: 3
+lffreq: 30000
+fmdev: 4000000

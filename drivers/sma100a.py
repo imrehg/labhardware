@@ -5,10 +5,17 @@ class SMA100A:
 
     def __init__(self, gpib):
         ''' Initialize device '''
-        self.device = visa.instrument("GPIB::%d" %(gpib))
+        error = False
         self.__type = "signal generator"
-        if (not self.__TestConnection()):
-            print "No %s on this gpib channel..." %(self.__type)
+        try:
+            self.device = visa.instrument("GPIB::%d" %(gpib))
+            if not self.__TestConnection():
+                error = True            
+        except visa.VisaIOError:
+            error = True
+        
+        if error:
+            print "Exception: No %s on this gpib channel..." %(self.__type)
             return None
         else:
             print "Success: %s found" %(self.__type)
