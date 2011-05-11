@@ -1,0 +1,10 @@
+[Setup]
+GPIB: 28
+logfile: auto
+[Experiment]
+freqcenter: 9192631770
+scanstart: -100000
+scanstop:   100000
+scansteps: 5
+rfpower: 10
+delay: 5
