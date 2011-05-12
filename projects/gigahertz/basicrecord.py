@@ -22,8 +22,8 @@ siggen = sma100a.SMA100A(config.getint('Setup','siggen_GPIB'))
 lockin = stanfordSR830.StanfordSR830(config.getint('Setup','lockin_GPIB'))
 
 siggen.rfoff()
-# result = siggen.reset("EXT")
-result = siggen.reset()
+# Enforce external reference
+result = siggen.reset("EXT")
 print "Reset result: %s" %(result)
 
 ## Get settings from config file
