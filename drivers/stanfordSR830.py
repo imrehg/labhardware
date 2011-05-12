@@ -5,12 +5,20 @@ class StanfordSR830:
 
     def __init__(self, gpib):
         ''' Initialize device '''
-        self.device = visa.instrument("GPIB::%d" %(gpib))
-        if (not self.__TestConnection()):
-            print "No lock-in amplifier on this gpib channel..."
+        error = False
+        self.__type = "lock-in amplifier"
+        try:
+            self.device = visa.instrument("GPIB::%d" %(gpib))
+            if not self.__TestConnection():
+                error = True
+        except visa.VisaIOError:
+            error = True
+
+        if error:
+            print "Exception: No %s on this gpib channel: %d" %(self.__type, gpib)
             return None
         else:
-            print "Lock-in amplifier found"
+            print "Success: %s found" %(self.__type)
 
     def __TestConnection(self):
         ''' Test if we have the right device by matching id number '''

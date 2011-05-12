@@ -10,12 +10,12 @@ class SMA100A:
         try:
             self.device = visa.instrument("GPIB::%d" %(gpib))
             if not self.__TestConnection():
-                error = True            
+                error = True
         except visa.VisaIOError:
             error = True
         
         if error:
-            print "Exception: No %s on this gpib channel..." %(self.__type)
+            print "Exception: No %s on this gpib channel: %d" %(self.__type, gpib)
             return None
         else:
             print "Success: %s found" %(self.__type)
