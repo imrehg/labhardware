@@ -47,7 +47,7 @@ class SMA100A:
         return self.device.ask(command)
 
     def setFrequency(self, freq):
-        self.device.write(":FREQ:CW %.2f hz" %(freq))
+        self.device.write(":FREQ:CW %.2f hz; *OPC?" %(freq))
 
     def setPower(self, rfpower):
         self.device.write(":POW %.2f" %(rfpower))

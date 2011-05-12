@@ -22,48 +22,86 @@ siggen = sma100a.SMA100A(config.getint('Setup','siggen_GPIB'))
 lockin = stanfordSR830.StanfordSR830(config.getint('Setup','lockin_GPIB'))
 
 siggen.rfoff()
+# result = siggen.reset("EXT")
 result = siggen.reset()
 print "Reset result: %s" %(result)
 
-# Get settings from config file
+## Get settings from config file
+# Signal generator
 eomcenter = config.getfloat('Experiment', 'freqcenter')
 eomscan = [config.getfloat('Experiment', 'scanstart'),
            config.getfloat('Experiment', 'scanstop')]
 eomscansteps = config.getint('Experiment', 'scansteps')
 rfpower = config.getfloat('Experiment', 'rfpower')
-delay = config.getfloat('Experiment', 'delay')
 lffreq = config.getfloat('Experiment', 'lffreq')
 fmdev = config.getfloat('Experiment', 'fmdev')
 
-# # Setup logging
-# logger = logging.getLogger()
-# logfile = config.get('Setup','logfile')
-# if logfile == 'auto':
-#     logfile = "gigahertz_%s.log" %(strftime("%y%m%d_%H%M%S"))
-# hdlr = logging.FileHandler(logfile)
-# formatter = logging.Formatter('%(message)s')
-# hdlr.setFormatter(formatter)
-# logger.addHandler(hdlr)
-# logger.setLevel(logging.INFO) 
+# Lockin amplifier
+# Check Manual for the meaning of these integers: pages 5-13 and 5-6
+lockinsensitivity = config.getint('Experiment','lockinsensitivity')
+lockinrate = config.getint('Experiment','lockinrate')
+lockintimeconstant = config.getint('Experiment','lockintimeconstant')
+startdelay = config.getfloat('Experiment','startdelay')
+lockinch1 = config.getfloat('Experiment','lockinch1')
+lockinch2 = config.getfloat('Experiment','lockinch2')
+repeats = config.getint('Experiment','repeats')
 
-# # Save configuration info
-# f = open(configfile)
-# for line in f:
-#     logger.info("# %s" %line.strip())
-# f.close()
+if lockinch1 == 0:
+    ch1name = "Xcurrent(A)"
+elif lockinch1 == 1:
+    ch1name = "Rcurrent(A)"
+else:
+    ch1name = "Ch1/Choice%d" %lockinch1
+
+if lockinch2 == 0:
+    ch2name = "Ycurrent(A)"
+elif lockinch2 == 1:
+    ch2name = "PhaseAngle(Deg)"
+else:
+    ch2name = "Ch2/Choice%d" %lockinch2
+
+# Setup logging
+logger = logging.getLogger()
+logfile = config.get('Setup','logfile')
+if logfile == 'auto':
+    logfile = "gigahertz_%s.log" %(strftime("%y%m%d_%H%M%S"))
+hdlr = logging.FileHandler(logfile)
+formatter = logging.Formatter('%(message)s')
+hdlr.setFormatter(formatter)
+logger.addHandler(hdlr)
+logger.setLevel(logging.INFO) 
+
+# Save configuration info
+f = open(configfile)
+for line in f:
+    logger.info("# %s" %line.strip())
+f.close()
 
 # Setting up the experiment with FM modulation
 siggen.write(":SOUR:MODE CW")
-siggen.setFrequency(eomcenter + ss[0])
+siggen.setFrequency(eomcenter + eomscan[0])
 siggen.setPower(rfpower)
 siggen.write(":LFO:FREQ %.1f" %(lffreq))
 siggen.write(":LFO:FREQ:MODE CW")
+siggen.write(":LFO ON")
 siggen.write(":FM:DEV %.1f" %(fmdev))
 siggen.write(":FM:STAT ON")
 siggen.rfon()
 siggen.write("*OPC?")
 
 # Setup lock-in amplifier to get a number of datapoints in one go
+lockin.write("REST")
+lockin.write("SRAT %d" %(lockinrate))
+lockin.write("OFLT %d" %(lockintimeconstant))
+lockin.write("SENS %d" %(lockinsensitivity))
+lockin.write("DDEF1,%d,0" %(lockinch1))
+lockin.write("DDEF2,%d,0" %(lockinch2))
+# q = ["SRAT?", "SPTS?", "SEND?", "OFLT?", "SENS?"]
+# for quest in q:
+#     print quest, "->", lockin.ask(quest)
+
+print ">>>>>>>>>>>>>>>>>>>>>>>>>>>"
+logging.info("#EOMFrequency(Hz) %s %s" %(ch1name, ch2name))
 
 ss = numpy.linspace(eomscan[0], eomscan[1], eomscansteps)
 print "Frequency center: %.2f Hz" %(eomcenter)
@@ -74,14 +112,18 @@ for index, scanning in enumerate(ss):
     siggen.setFrequency(eomcenter+scanning)
     setfreq = float(siggen.ask(":FREQ?")) - eomcenter
 
-    # This is not meant for synchronization...
-    sleep(delay)
+    sleep(startdelay)
+    # Lock-in amplifier measurement
+    lockin.write("REST")
+    lockin.write("STRT")
+    # Wait until there's enough data
+    while (int(lockin.ask("SPTS?")) < repeats):
+        sleep(0.01)
+    lockin.write("PAUS")
+    tempch1 = lockin.ask("TRCA?1,0,%d" %(repeats))
+    tempoutch1 = numpy.array([float(x) for x in tempch1.split(',') if not (x == '')])
+    tempch2 = lockin.ask("TRCA?2,0,%d" %(repeats))
+    tempoutch2 = numpy.array([float(x) for x in tempch2.split(',') if not (x == '')])
 
-    # Delay for signal generator
-    # Set delay for lock-in
-
-    # wait until lock-in finishes
-
-    # get data
-
-    # save data
+    for index in xrange(repeats):
+        logger.info("%.3f,%e,%e" %(setfreq, tempoutch1[index], tempoutch2[index]))
