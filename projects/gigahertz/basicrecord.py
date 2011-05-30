@@ -118,7 +118,13 @@ for index, scanning in enumerate(ss):
     lockin.write("STRT")
     # Wait until there's enough data
     while (int(lockin.ask("SPTS?")) < repeats):
-        sleep(0.01)
+        try:
+            sleep(0.01)
+        except KeyboardInterrupt:
+            # Wanna shut down data collection
+            lockin.write("PAUS")
+            sys.exit(0)
+
     lockin.write("PAUS")
     tempch1 = lockin.ask("TRCA?1,0,%d" %(repeats))
     tempoutch1 = numpy.array([float(x) for x in tempch1.split(',') if not (x == '')])
