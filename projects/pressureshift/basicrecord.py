@@ -34,6 +34,13 @@ funcgen = agilent81150.Agilent81150(config.getint('Setup','funcgen_GPIB'))
 #counter = agilentcounter.AgilentCounter(config.getint('Setup','counter_GPIB'))
 lockin = stanfordSR830.StanfordSR830(config.getint('Setup','lockin_GPIB'))
 
+try:
+    lockin2_GPIB = config.getint('Setup', 'lockin2_GPIB')
+    lockin2_GPIB = stanfordSR830.StanfordSR830(lockin2_GPIB)
+except:
+    lockin2 = None
+
+
 # Get settings from config file
 aomcentre = config.getfloat('Experiment','aomcentre')
 aomamp = [config.getfloat('Experiment', 'aomamplitude1'),
@@ -96,6 +103,17 @@ lockin.write("DDEF2,%d,0" %(lockinch2))
 q = ["SRAT?", "SPTS?", "SEND?", "OFLT?", "SENS?"]
 for quest in q:
     print quest, "->", lockin.ask(quest)
+
+## Second lock-in data log
+if lockin2:
+    ## OLFT: Time constant
+    ## SENS: Sensitivity
+    logging.info("# Frequency stabilization lockin: ")
+    sens = lockin2.getSensitivity()
+    logging.info("# Sensitivity: %d %s" %(sens[0], sens[1]))
+    tconst = lockin2.getTimeconstant()
+    logging.info("# Time constant: %d %s" %(tconst[0], tconst[1]))
+
 
 print ">>>>>>>>>>>>>>>>>>>>>>>>>>>"
 logging.info("#AOMFrequency(Hz) MeasuredBeat(Hz) LockInSignal(V)")

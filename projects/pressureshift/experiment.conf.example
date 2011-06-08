@@ -2,6 +2,7 @@
 funcgen_GPIB: 14
 counter_GPIB: 1
 lockin_GPIB: 8
+lockin2_GPIB: 10
 logfile: auto
 fromaddr: <changeme>
 password: <changeme>
