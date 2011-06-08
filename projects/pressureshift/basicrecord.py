@@ -19,8 +19,6 @@ except:
     print "Cannot find configuration file."
     sys.exit(1)
 
-import sendemail
-
 def checklock(beatfreq, setfreq):
     """ Panic switch if unlocked laser is detected """
     # if abs(abs(setfreq) - beatfreq) > 1000:
