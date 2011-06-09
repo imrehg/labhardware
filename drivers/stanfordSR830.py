@@ -2,10 +2,6 @@ import visa
 from re import match
 
 class StanfordSR830:
-    sensunits = ["nV/fA", "uV/pA", "mV/nA", "V/uA"]
-    sensuval = [1, 2, 5]
-    timeunits = ["us", "ms", "s", "ks"]
-    timeuval = [1, 3]
 
     def __init__(self, gpib):
         ''' Initialize device '''
@@ -82,16 +78,23 @@ class StanfordSR830:
     def getFreq(self):
         return float(self.device.ask("FETCH:FREQ?"))
 
-    def getSensitivity(self):
+    def getSensitivity(self, sens=None):
         """ Get Sensitivity setting, using data from manual, algorithmically """
-        sens = self.device.ask("SENS?")
-        sensrange = self.sensunit[(sens + 1) / 9]
-        value = self.sensuval[((sens+1)%9)%3] * 10**(((sens+1)%9) / 3)
-        return (value, sensrange)
+        sensunits = ["nV/fA", "uV/pA", "mV/nA", "V/uA"]
+        sensuval = [1, 2, 5]
+        if sens is None:
+            sens = int(self.device.ask("SENS?"))
+        sensunit = sensunits[(sens + 1) / 9]
+        value = sensuval[((sens+1)%9)%3] * 10**(((sens+1)%9) / 3)
+        return {"raw": sens, "value": value, "units": sensunit}
 
-    def getTimeconstant(self):
-        """ Get time constant setting, using data from the manual, algorithmically """
-        olft = self.device.ask("OLFT?")
-        timeunit = self.timeunits[(olft + 2) / 6]
-        value = self.timeuval[((sens+2)%6)%2] * 10**(((sens+2)%6) / 2)
-        return (value, timeunit)
+    def getTimeconstant(self, oflt=None):
+        # """ Get time constant setting, using data from the manual, algorithmically """
+        timeunits = ["us", "ms", "s", "ks"]
+        timeuval = [1, 3]
+        if oflt is None:
+            oflt = int(self.device.ask("OFLT?"))
+        timeunit = timeunits[(oflt + 2) / 6]
+        value = timeuval[((oflt+2)%6)%2] * 10**(((oflt+2)%6) / 2)
+        return {"raw": oflt, "value": value, "units": timeunit}
+
