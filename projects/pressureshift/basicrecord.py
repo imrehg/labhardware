@@ -108,9 +108,9 @@ if lockin2:
     ## SENS: Sensitivity
     logging.info("# Frequency stabilization lockin: ")
     sens = lockin2.getSensitivity()
-    logging.info("# Sensitivity: %d %s" %(sens[0], sens[1]))
+    logging.info("# Sensitivity: %d %s (%d)" %(sens["value"], sens["units"], sens["raw"] ))
     tconst = lockin2.getTimeconstant()
-    logging.info("# Time constant: %d %s" %(tconst[0], tconst[1]))
+    logging.info("# Time constant: %d %s (%d)" %(tconst["value"], tconst["units"], tconst["raw"]))
 
 
 print ">>>>>>>>>>>>>>>>>>>>>>>>>>>"
