@@ -98,8 +98,6 @@ for quest in q:
 
 ## Second lock-in data log
 if lockin2:
-    ## OLFT: Time constant
-    ## SENS: Sensitivity
     logging.info("# Frequency stabilization lockin: ")
     sens = lockin2.getSensitivity()
     logging.info("# Sensitivity: %d %s (%d)" %(sens["value"], sens["units"], sens["raw"] ))
