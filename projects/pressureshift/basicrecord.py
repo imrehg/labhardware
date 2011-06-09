@@ -34,7 +34,7 @@ lockin = stanfordSR830.StanfordSR830(config.getint('Setup','lockin_GPIB'))
 
 try:
     lockin2_GPIB = config.getint('Setup', 'lockin2_GPIB')
-    lockin2_GPIB = stanfordSR830.StanfordSR830(lockin2_GPIB)
+    lockin2 = stanfordSR830.StanfordSR830(lockin2_GPIB)
 except:
     lockin2 = None
 
