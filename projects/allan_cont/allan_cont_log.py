@@ -9,6 +9,7 @@ import sys
 import re
 import logging
 
+sys.path.append("../../drivers")
 from agilent53230 import Counter
 
 if __name__ == "__main__":
