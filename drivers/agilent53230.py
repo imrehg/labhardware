@@ -51,6 +51,23 @@ class Counter:
     #     self.device.write(":FREQ:ARM:STOP:SOUR TIM")
     #     self.device.write(":FREQ:ARM:STOP:TIM %f" %(gatetime))
 
+    def setupFreq(self, channel=1, gatetime=1):
+        self.reset()
+        commands = ["CONF:FREQ (@%s)" %(channel),
+                    "SENS:FREQ:MODE CONT",
+                    "SENS:FREQ:GATE:TIME %g" %(gatetime),
+                    "CALC:MATH:STAT OFF",
+                    "CALC2:LIM:STAT OFF",
+                    "CALC3:AVER:STAT OFF",
+                    "FORMAT:ASCII",   # the fastest transfer mode
+                    "*DDT #15FETC?",  # define FETC? as trigger
+                    ]
+        for cmd in commands:
+            self.device.write(cmd)
+        freq = self.device.ask("READ:FREQUENCY?")
+        self.device.write(":FREQ:EXP%d %s" %(channel, freq))
+        self.device.write(":INIT:CONT ON")
+
     def setupAllan(self, channel=1, gatetime=1, counts=30):
         commands = ["CONF:FREQ (@%s)" %(channel),
                     "TRIG:COUN 1",

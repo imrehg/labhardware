@@ -1,0 +1,1 @@
+c:\Python26\python.exe foreverlog.py experiment.conf
