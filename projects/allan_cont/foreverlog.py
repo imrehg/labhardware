@@ -53,16 +53,20 @@ if __name__ == "__main__":
                 }
     for setting, value in settings.items():
         logger.info("#%s : %s" %(setting, value))
-    logger.info("#Time(Epoch) Frequency(Hz)")
-
+    logger.info("#Frequency(Hz)")
     counter.setupFreq(channel=ch, gatetime=gate)
+    print counter.ask(":SYST:ERROR?")
+    counter.write("INIT:IMM")
     while True:
         try:
             start = time()
-            freq = counter.getFreq()
-            print("Elapsed: %f" %(time()-start))
-            print("Frequency: %g Hz" %(freq))
-            logger.info("%.3f,%.5f" %(start, freq))
+            sleep(gate*5)
+            data = counter.ask("R?")
+            freqs = counter.parse(data)
+            print "Got %d freqs: ~%.5f" %(len(freqs), freqs[0])
+            for f in freqs:
+                logger.info("%.5f" %(f))
         except (KeyboardInterrupt):
+            counter.write("ABORT")
             print "Interrupted by user"
             break
