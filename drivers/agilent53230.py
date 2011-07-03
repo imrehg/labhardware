@@ -63,6 +63,19 @@ class Counter:
         for cmd in commands:
             self.device.write(cmd)
 
+    def setupFreqBatch(self, channel=1, count=1, gatetime=1):
+        """ Software triggered batch measurement """
+        commands = ["CONF:FREQ (@%s)" %(channel),
+                    "TRIG:SOUR BUS",
+                    "SAMPLE:COUNT %d" %(count),
+                    "SENS:FREQ:MODE CONT",
+                    "SENS:FREQ:GATE:TIME %g" %(gatetime),
+                    "SENS:FREQ:GATE:SOUR TIME",
+                    "CALC:STAT OFF",
+                    ]
+        for cmd in commands:
+            self.device.write(cmd)
+
     def setupAllan(self, channel=1, gatetime=1, counts=30):
         commands = ["CONF:FREQ (@%s)" %(channel),
                     "TRIG:COUN 1",
