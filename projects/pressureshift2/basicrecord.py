@@ -157,7 +157,7 @@ def connectiontest():
         print "Fail, check connections or settings"
 
 if __name__ == "__main__":
-    if sys.argv[2] and sys.argv[2] == "connection":
+    if len(sys.argv) >= 3 and sys.argv[2] == "connection":
         connectiontest()
     else:
         experiment()
