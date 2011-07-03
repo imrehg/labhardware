@@ -3,9 +3,6 @@ funcgen_GPIB: 14
 counter_GPIB: 1
 lockin_GPIB: 8
 logfile: auto
-fromaddr: <changeme>
-password: <changeme>
-toaddr: <changeme>
 [Experiment]
 lockinch1: 1
 lockinch2: 1
