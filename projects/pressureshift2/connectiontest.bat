@@ -1,2 +1,1 @@
-set PYTHONPATH=%PYTHONPATH%;D:\labhardware\drivers\ 
-python connectiontest.py experiment.conf
+c:/python26/python basicrecord.py experiment.conf connection
