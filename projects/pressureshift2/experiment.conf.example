@@ -2,7 +2,6 @@
 funcgen_GPIB: 14
 counter_GPIB: 1
 lockin_GPIB: 8
-lockin2_GPIB: 10
 logfile: auto
 fromaddr: <changeme>
 password: <changeme>
@@ -11,8 +10,6 @@ toaddr: <changeme>
 lockinch1: 1
 lockinch2: 1
 aomcentre: 78000000
-aomamplitude1: 200
-aomamplitude2: 250
 amchannel: 2
 amdepth: 100
 amfrequency: 67
@@ -20,8 +17,8 @@ scanstart: -100000
 scanstop:   100000
 scansteps: 5
 repeats: 10
-countergate: 0.5
 lockinrate: 13
 lockintimeconstant: 3
 lockinsensitivity: 21
 startdelay: 0.5
+counterchannel: 1
