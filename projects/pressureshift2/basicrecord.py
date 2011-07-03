@@ -10,7 +10,7 @@ import logging
 sys.path.append("../../drivers")
 import agilent81150
 import stanfordSR830
-
+import agilent53230
 
 try:
     configfile = sys.argv[1]
@@ -149,8 +149,9 @@ def connectiontest():
     """ Check if connection can be established with the given settings """
     funcgen = agilent81150.Agilent81150(config.getint('Setup','funcgen_GPIB'))
     lockin = stanfordSR830.StanfordSR830(config.getint('Setup','lockin_GPIB'))
+    counter = agilent53230.Counter(config.getint('Setup','counter_GPIB'))
 
-    if not((funcgen is None) or (lockin is None)):
+    if None not in [funcgen, lockin, counter]:
         print "Success!"
     else:
         print "Fail, check connections or settings"
