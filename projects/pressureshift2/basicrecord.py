@@ -86,6 +86,19 @@ def experiment():
     lockin.write("DDEF2,%d,0" %(lockinch2))
     lockin.write("TSTR 1") # Trigger start scan
 
+    if lockinch1 == 0:
+        ch1name = "Xcurrent(A)"
+    elif lockinch1 == 1:
+        ch1name = "Rcurrent(A)"
+    else:
+        ch1name = "Ch1/Choice%d" %lockinch1
+    if lockinch2 == 0:
+        ch2name = "Ycurrent(A)"
+    elif lockinch2 == 1:
+        ch2name = "PhaseAngle(Deg)"
+    else:
+        ch2name = "Ch2/Choice%d" %lockinch2
+
     q = ["SRAT?", "SPTS?", "SEND?", "OFLT?", "SENS?"]
     for quest in q:
         print quest, "->", lockin.ask(quest)
@@ -97,7 +110,13 @@ def experiment():
     counter.setupFreqBatch(channel=counterchannel, count=repeats, gatetime=gatetime)
 
     print ">>>>>>>>>>>>>>>>>>>>>>>>>>>"
-    logging.info("#AOMFrequency(Hz) MeasuredBeat(Hz) LockInSignal(V)")
+    logging.info("#")
+    lockinsens = lockin.getSensitivity()
+    lockintime = lockin.getTimeconstant()
+    logging.info("#Sensitivity: %g %s" %(lockinsens["value"], lockinsens["units"]))
+    logging.info("#Time constant: %g %s" %(lockintime["value"], lockintime["units"]))
+    logging.info("#")
+    logging.info("#AOMDetuning(Hz) %s %s BeatFrequency(Hz)" %(ch1name, ch2name))
     ss = linspace(aomscan[0],aomscan[1],aomscansteps)
     for index, scanning in enumerate(ss):
         #### Steps
