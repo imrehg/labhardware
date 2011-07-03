@@ -98,3 +98,8 @@ class StanfordSR830:
         value = timeuval[((oflt+2)%6)%2] * 10**(((oflt+2)%6) / 2)
         return {"raw": oflt, "value": value, "units": timeunit}
 
+    def getSampleRate(self, sample=None):
+        rates = [0.065, 0.125, 0.250, 0.5, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 0]
+        if sample is None:
+            sample = int(self.device.ask("SRAT?"))
+        return {"raw": sample, "value": rates[sample], "units": "Hz"}
