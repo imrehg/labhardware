@@ -20,13 +20,6 @@ except:
     print "Cannot find configuration file."
     sys.exit(1)
 
-# def checklock(beatfreq, setfreq):
-#     """ Panic switch if unlocked laser is detected """
-#     # if abs(abs(setfreq) - beatfreq) > 1000:
-#     #     print "Unlocked!"
-#     #     sys.exit(1)
-#     pass
-
 def experiment():
     # Import configuration and do basic setup
     funcgen = agilent81150.Agilent81150(config.getint('Setup','funcgen_GPIB'))
