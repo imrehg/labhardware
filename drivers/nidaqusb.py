@@ -103,6 +103,10 @@ class Task():
             self.Stop()
             nidaq.DAQmxClearTask(self.taskHandle)
 
+    def Wait(self):
+        """ Wait until task is done """
+        CHK(nidaq.DAQmxWaitUntilTaskDone(self.taskHandle, float64(120)))
+
 if __name__ == "__main__":
     """
     Example code to try this class: record 1s worth of 1000 voltage datapoints on AI0
