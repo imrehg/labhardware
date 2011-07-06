@@ -115,5 +115,8 @@ class Counter:
         From manual page 238
         """
         digits = int(data[1])
-        freqs = [float(f) for f in data[(digits+2):].split(',')]
+        try:
+            freqs = [float(f) for f in data[(digits+2):].split(',')]
+        except (ValueError):
+            freqs = []
         return freqs
