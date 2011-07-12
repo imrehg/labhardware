@@ -115,8 +115,11 @@ class Counter:
         From manual page 238
         """
         digits = int(data[1])
+        chars = int(data[2:2+digits])
+        start, stop = digits+2, digits+2+chars
         try:
-            freqs = [float(f) for f in data[(digits+2):].split(',')]
+            # Float has some rounding in the 16-17th digit or so...
+            freqs = [float(f) for f in data[start:stop].split(',')]
         except (ValueError):
             freqs = []
         return freqs
