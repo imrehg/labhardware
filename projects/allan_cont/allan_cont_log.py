@@ -49,6 +49,8 @@ if __name__ == "__main__":
     hdlr.setFormatter(formatter)
     logger.addHandler(hdlr)
     logger.setLevel(logging.INFO)
+    # Setup RAW output file
+    logfileraw = open("allan_%s_raw.log" %(strftime("%y%m%d_%H%M%S")), "w")
 
     # Write settings/data header
     logger.info("#Allan w/ Agilent 53230, settings:")
@@ -84,5 +86,10 @@ if __name__ == "__main__":
         avgfq = float(counter.ask("CALC:AVER:AVER?"))
         minfq = float(counter.ask("CALC:AVER:MIN?"))
         maxfq = float(counter.ask("CALC:AVER:MAX?"))
+        points = counter.ask("R?")
         print("Allan deviation: %g Hz" %(allan))
-        logger.info("%e,%e,%.5f,%.5f,%.5f" %(gatetime, allan, avgfq, minfq, maxfq))
+        logger.info("%e,%e,%.6f,%.6f,%.6f" %(gatetime, allan, avgfq, minfq, maxfq))
+        for v in counter.parse(points):
+            logfileraw.write("%e,%.6f\n" %(gatetime, v))
+
+logfileraw.close()
