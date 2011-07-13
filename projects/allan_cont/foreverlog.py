@@ -55,12 +55,14 @@ if __name__ == "__main__":
         logger.info("#%s : %s" %(setting, value))
     logger.info("#Frequency(Hz)")
     counter.setupFreq(channel=ch, gatetime=gate)
+    waittime = max(gate*5, 0.1) # has to be long enough not to timeout
     print counter.ask(":SYST:ERROR?")
     counter.write("INIT:IMM")
+    sleep(1) # initial sleep while counter is setting up
     while True:
         try:
             start = time()
-            sleep(gate*5)
+            sleep(waittime)
             data = counter.ask("R?")
             freqs = counter.parse(data)
             print "Got %d freqs: ~%.5f" %(len(freqs), freqs[0])
