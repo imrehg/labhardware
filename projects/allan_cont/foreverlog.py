@@ -65,7 +65,10 @@ if __name__ == "__main__":
             sleep(waittime)
             data = counter.ask("R?")
             freqs = counter.parse(data)
-            print "Got %d freqs: ~%.5f" %(len(freqs), freqs[0])
+            try:
+                print "Got %d freqs: ~%.5f" %(len(freqs), freqs[0])
+            except (IndexError):
+                print ">.< not enought data this time"
             for f in freqs:
                 logger.info("%.5f" %(f))
         except (KeyboardInterrupt):
