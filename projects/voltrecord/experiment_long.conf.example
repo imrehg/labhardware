@@ -1,0 +1,4 @@
+[Experiment]
+aichannel = 1
+voltlimit = 10
+samplerate = 5000
