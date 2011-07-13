@@ -21,6 +21,7 @@ DAQmx_Val_Cfg_Default = int32(-1)
 DAQmx_Val_Volts = 10348
 DAQmx_Val_Rising = 10280
 DAQmx_Val_FiniteSamps = 10178
+DAQmx_Val_ContSamps = 10123
 DAQmx_Val_GroupByChannel = 0
 ##############################
 def CHK(err):
@@ -38,18 +39,19 @@ class NIDAQ():
     def __init__(self, name="Dev1"):
         self.name = name
 
-    def createTask(self, channel="ai0", maxsample=1000, rate=1000, voltlimit=10.0):
-        return Task(self, channel, maxsample, rate, voltlimit)
+    def createTask(self, channel="ai0", maxsample=1000, rate=1000, voltlimit=10.0, finite=True, *args, **kwargs):
+        return Task(self, channel, maxsample, rate, voltlimit, finite, *args, **kwargs)
 
 #### Task class
 class Task():
     # voltlimits = [10, 5, 2, 1, 0.5, 0.2, 0.1]
 
-    def __init__(self, device, channel="ai0", maxsample=1000, rate=1000, voltlimit=10.0):
+    def __init__(self, device, channel="ai0", maxsample=1000, rate=1000, voltlimit=10.0, finite=True):
         """ Set up a voltage measurement task """
         self.taskHandle = TaskHandle(0)
         self.channelName = "%s/%s" %(device.name, channel)
         self.maxsample = maxsample
+        self.finite = finite
         CHK(nidaq.DAQmxCreateTask("",ctypes.byref(self.taskHandle)))
         CHK(nidaq.DAQmxCreateAIVoltageChan(self.taskHandle,
                                            self.channelName,
@@ -61,11 +63,12 @@ class Task():
                                            None
                                            )
             )
+        samples = DAQmx_Val_FiniteSamps if self.finite else DAQmx_Val_ContSamps
         CHK(nidaq.DAQmxCfgSampClkTiming(self.taskHandle,
                                         "",
                                         float64(rate),
                                         DAQmx_Val_Rising,
-                                        DAQmx_Val_FiniteSamps,
+                                        samples,
                                         uInt64(self.maxsample)
                                         )
             )
