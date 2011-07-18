@@ -36,6 +36,11 @@ if __name__ == "__main__":
 
     ch = int(raw_input("Channel number:  "))
     gate = float(raw_input("Gate time (s):  "))
+    try:
+        totaltime = float(raw_input("Total time in seconds, (hit enter for infinite): "))
+        totalpoints = int(totaltime / gate)
+    except:
+        totaltime = None
 
     # Setup output file
     logger = logging.getLogger()
@@ -59,6 +64,7 @@ if __name__ == "__main__":
     print counter.ask(":SYST:ERROR?")
     counter.write("INIT:IMM")
     sleep(1) # initial sleep while counter is setting up
+    points = 0
     while True:
         try:
             start = time()
@@ -70,8 +76,13 @@ if __name__ == "__main__":
             except (IndexError):
                 print ">.< not enought data this time"
             for f in freqs:
+                points += 1
                 logger.info("%.5f" %(f))
+                if totalpoints and (points >= totalpoints):
+                    break
         except (KeyboardInterrupt):
-            counter.write("ABORT")
             print "Interrupted by user"
             break
+
+counter.write("ABORT")
+print("Finished.")
