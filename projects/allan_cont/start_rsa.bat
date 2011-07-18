@@ -1,0 +1,1 @@
+c:\Python26\python.exe rsalog.py experiment_rsa.conf
