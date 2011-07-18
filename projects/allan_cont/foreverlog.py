@@ -40,7 +40,7 @@ if __name__ == "__main__":
         totaltime = float(raw_input("Total time in seconds, (hit enter for infinite): "))
         totalpoints = int(totaltime / gate)
     except:
-        totaltime = None
+        totalpoints = None
 
     # Setup output file
     logger = logging.getLogger()
@@ -65,6 +65,7 @@ if __name__ == "__main__":
     counter.write("INIT:IMM")
     sleep(1) # initial sleep while counter is setting up
     points = 0
+    finished = False
     while True:
         try:
             start = time()
@@ -79,7 +80,10 @@ if __name__ == "__main__":
                 points += 1
                 logger.info("%.5f" %(f))
                 if totalpoints and (points >= totalpoints):
+                    finished = True
                     break
+            if finished:
+                break
         except (KeyboardInterrupt):
             print "Interrupted by user"
             break
