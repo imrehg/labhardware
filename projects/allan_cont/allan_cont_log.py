@@ -68,6 +68,9 @@ if __name__ == "__main__":
 
         start = time()
         counter.setupAllan(channel=ch, gatetime=gatetime, counts=counts)
+        # Get the real gatetime value
+        gatetime = float(counter.ask("FREQ:GATE:TIME?"))
+
         counter.write("INIT")
         print "Gating time: %g s" %(gatetime)
 
