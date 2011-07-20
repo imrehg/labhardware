@@ -46,9 +46,6 @@ if __name__ == "__main__":
     ### Include measurement section in config
 
     ch = int(raw_input("Channel number:  "))
-    # mintime = float(raw_input("Minimum gate time (s):  "))
-    # maxtime = float(raw_input("Maximum gate time (s):  "))
-    # steps = int(raw_input("Number of gate times:  "))
     print "Logaritmic scan between 1us...1s"
     counts = int(raw_input("Number of reading each:  "))
     gates = logiter()
@@ -67,9 +64,6 @@ if __name__ == "__main__":
     # Write settings/data header
     logger.info("#Allan w/ Agilent 53230, settings:")
     settings = {'Channel number':ch,
-                'Minimum gating time':mintime,
-                'Maximum gating time':maxtime,
-                'Number of gating times':steps,
                 'Number of readings each:':counts,
                 }
     for setting, value in settings.items():
