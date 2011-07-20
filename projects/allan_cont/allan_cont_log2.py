@@ -48,6 +48,7 @@ if __name__ == "__main__":
     ch = int(raw_input("Channel number:  "))
     print "Logaritmic scan between 1us...1s"
     counts = int(raw_input("Number of reading each:  "))
+    comment = raw_input("Add comment (enter for nothing): ")
     gates = logiter()
 
     # Setup output file
@@ -65,6 +66,7 @@ if __name__ == "__main__":
     logger.info("#Allan w/ Agilent 53230, settings:")
     settings = {'Channel number':ch,
                 'Number of readings each:':counts,
+                'Comment:':comment,
                 }
     for setting, value in settings.items():
         logger.info("#%s : %s" %(setting, value))
