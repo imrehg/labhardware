@@ -21,7 +21,10 @@ class GPS:
         message = "@@%s%s\r\n" %(query, self.checksum(query))
         print "Query: %s, (%d)" %(query, len(message))
         self.__ser.write(message)
-        return self.__ser.readline()+self.__ser.readline()
+        response = self.__ser.readline()
+        while response[-2:] != '\r\n':
+            response += self.__ser.readline()
+        return response
 
 if __name__ == "__main__":
     gps = GPS(0)
