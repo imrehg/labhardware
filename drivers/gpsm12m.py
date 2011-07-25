@@ -5,6 +5,8 @@ def deepprint(dd, l=0):
         if type(dd[k]) == type({}):
             print "\t"*l, k
             deepprint(dd[k],l+1)
+        elif type(dd[k]) == type([[]]):
+            print "\t"*l, k, ": ", ", ".join([label[0] for label in dd[k]])
         else:
             print "\t"*l, k, ": ", dd[k]
 
