@@ -34,7 +34,6 @@ class GPS:
 
     def write(self, message):
         message = "@@%s%s\r\n" %(message, self.checksum(message))
-        print "Message: %s" %message
         self.__ser.write(message)
 
     def parse(self, resp):
@@ -81,6 +80,55 @@ class GPS:
                         'pos': "%f,%f" %(lat, lon)
                         }
             out['position'] = position
+            out['nsat'] = ord(resp[47])
+            out['tsat'] = ord(resp[48])
+            return out
+        elif rtype == 'Hb':
+            out = {'code': rtype,
+                   'info': 'Short position message',
+                   }
+            date = {'month': ord(resp[4]),
+                    'day': ord(resp[5]),
+                    'year': ord(resp[6])*256 + ord(resp[7]),
+                    }
+            out['date'] = date
+            time = {'hour': ord(resp[8]),
+                    'minute': ord(resp[9]),
+                    'second': ord(resp[10]),
+                    'nanosecond': ord(resp[11])*256**3 + ord(resp[12])*256**2 + ord(resp[13])*256 + ord(resp[14]),
+                    }
+            out['time'] = time
+            lat = (ord(resp[15])*256**3 + ord(resp[16])*256**2 + ord(resp[17])*256 + ord(resp[18]))/324e6*90
+            lon = (ord(resp[19])*256**3 + ord(resp[20])*256**2 + ord(resp[21])*256 + ord(resp[22]))/648e6*180
+            height = (ord(resp[23])*256**3 + ord(resp[24])*256**2 + ord(resp[25])*256 + ord(resp[26]))/100
+            msl = ord(resp[27])*256**3 + ord(resp[28])*256**2 + ord(resp[29])*256 + ord(resp[30])
+            position = {'latitude': lat,
+                        'longitude': lon,
+                        'pos': "%f,%f" %(lat, lon),
+                        'height': height,
+                        'msl': msl,
+                        }
+            out['position'] = position
+            speed = {'3D': (ord(resp[31])*256 + ord(resp[32]))/100,
+                     '2D': (ord(resp[33])*256 + ord(resp[34]))/100,
+                     'heading': (ord(resp[35])*256 + ord(resp[36]))/10,
+                     }
+            out['speed'] = speed
+            out['geometry'] = (ord(resp[37])*256 + ord(resp[38]))/10
+            out['nsat'] = ord(resp[39])
+            out['tsat'] = ord(resp[40])
+            status = ord(resp[41])*256 + ord(resp[42])
+            fix = (status & 0b1110000000000000) >> 13
+            fstats = {0b111: '3D fix',
+                      0b110: '2D fix',
+                      0b101:'Propagate mode',
+                      0b100: 'Position hold',
+                      0b011: 'Acquiring satellites',
+                      0b010: 'Bad geometry',
+                      0b001: 'Reserved',
+                      0b000: 'Reserved',
+                      }
+            out['fixstatus'] = fstats[fix]
             return out
         elif rtype == 'AP':
             out = {'code': rtype,
@@ -103,7 +151,21 @@ class GPS:
                 status = 'unknown'
             out['status'] = status
             return out
+        elif rtype == "Eq":
+            out = {'code': rtype,
+                   'info': 'ASCII Position Message',
+                   }
+            out['response'] = resp[4:-3]
+            return out
 
+    def pprint(self, query):
+        response = self.ask(query)
+        data = self.parse(response)
+        print "%s (%s):" %(data['info'], data['code'])
+        print "="*20
+        del(data['info'])
+        del(data['code'])
+        deepprint(data)
 
 if __name__ == "__main__":
     gps = GPS(0)
@@ -116,14 +178,19 @@ if __name__ == "__main__":
             for sat in resp['sats']:
                 print "ID: %d, pos: %d / %d" %(sat['id'], sat['elevation'], sat['azimuth'])
 
-    tr = gps.ask("Ha"+chr(0))
-    print gps.parse(tr)
+    # tr = gps.ask("Hb"+chr(0))
+    # print gps.parse(tr)
+    gps.pprint("Hb"+chr(0))
 
     # print gps.ask("AM"+chr(255)+chr(255)+chr(255)+chr(255))
     # gps.write("AP"+chr(0))
     # print gps.parse(gps.ask("AP"+chr(255)))
 
     # gps.write("Gd"+chr(3))
-    print gps.parse(gps.ask("Gd"+chr(255)))
 
-    print gps.parse(gps.ask("Ge"+chr(255)))
+    gps.pprint("Gd"+chr(255))
+    ####print gps.parse(gps.ask("Gd"+chr(255)))
+
+    #### print gps.parse(gps.ask("Ge"+chr(255)))
+
+    ##### print gps.ask("Eq"+chr(0))
