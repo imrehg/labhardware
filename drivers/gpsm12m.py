@@ -1,5 +1,13 @@
 import serial
 
+def deepprint(dd, l=0):
+    for k in dd:
+        if type(dd[k]) == type({}):
+            print "\t"*l, k
+            deepprint(dd[k],l+1)
+        else:
+            print "\t"*l, k, ": ", dd[k]
+
 class GPS:
 
     def __init__(self, com):
