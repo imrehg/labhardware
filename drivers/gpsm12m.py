@@ -24,6 +24,27 @@ def satstatus(stat):
     # Accuracy (Bits 3-0) not decoded yet
     return msg
 
+def recstatus(stat):
+    msg = []
+    if (stat & 0b0000010000000000): msg += [['Narrow band tracking mode']]
+    if (stat & 0b0000001000000000): msg += [['Fast acquisition position']]
+    if (stat & 0b0000000100000000): msg += [['Filter reset to raw GPS position']]
+    if (stat & 0b0000000010000000): msg += [['Cold start']]
+    if (stat & 0b0000000001000000): msg += [['Differential fix']]
+    if (stat & 0b0000000000100000): msg += [['Position lock']]
+    if (stat & 0b0000000000010000): msg += [['Autosurvey mode']]
+    if (stat & 0b0000000000001000): msg += [['Insufficient visible satellites']]
+    asense = (stat & 0b0000000000000110) >> 1
+    if asense == 0:
+        msg += [['Antenna OK']]
+    elif asense == 1:
+        msg += [['Antenna Overcurrent']]
+    elif asense == 2:
+        msg += [['Antenna Undercurrent']]
+    elif asense == 3:
+        msg += [['Antenna NV']]
+    return msg
+
 class GPS:
 
     def __init__(self, com):
@@ -40,6 +61,9 @@ class GPS:
         for i in xrange(2, len(msg)):
             chk = chk ^ ord(msg[i])
         return chr(chk)
+
+    def readline(self):
+        return self.__ser.readline()
 
     def ask(self, query):
         self.write(query)
@@ -155,6 +179,7 @@ class GPS:
                       0b000: 'Reserved',
                       }
             out['fixstatus'] = fstats[fix]
+            out['reciver status'] = recstatus(fixstatus)
             return out
         elif rtype == 'Hb':
             out = {'code': rtype,
@@ -207,6 +232,13 @@ class GPS:
             out = {'code': rtype,
                    'info': 'Pulse mode select command'}
             out['status'] = '100PPS' if ord(resp[4]) == 1 else '1PPS'
+            return out
+        elif rtype == "Ia":
+            out = {'code': rtype,
+                   'info': '12 channel self-test message',
+                   }
+            sss = ord(resp[4])*256**2 + ord(resp[5])*256 + ord(resp[6])
+            out['status'] = bin(sss)
             return out
         elif rtype == 'Gd':
             out = {'code': rtype,
