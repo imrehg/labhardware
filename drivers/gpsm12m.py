@@ -240,6 +240,23 @@ class GPS:
             sss = ord(resp[4])*256**2 + ord(resp[5])*256 + ord(resp[6])
             out['status'] = bin(sss)
             return out
+        elif rtype == "Aq":
+            out = {'code': rtype,
+                   'info': 'Ionospheric correction',
+                   }
+            s = ord(resp[4])
+            if s == 0:
+                status = 'Both models disabled'
+            elif s == 1:
+                status = 'Ionospheric model enabled'
+            elif s == 2:
+                status = 'Tropospheric model enabled'
+            elif s == 3:
+                status = 'Both models enabled'
+            else:
+                status = 'Unknown'
+            out['status'] = status
+            return out
         elif rtype == 'Gd':
             out = {'code': rtype,
                    'info': 'Position control message'}
