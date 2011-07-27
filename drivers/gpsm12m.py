@@ -264,6 +264,17 @@ class GPS:
                 status = 'Unknown'
             out['status'] = status
             return out
+        elif rtype == 'Gc':
+            out = {'code': rtype,
+                   'info': '1PPS control message'}
+            pstat = ord(resp[4])
+            status = {0: 'disabled',
+                      1: 'on continuously',
+                      2: 'active only when tracking satellites',
+                      3: 'on when T-RAIM conditions are met',
+                      }
+            out['status'] = status.get(pstat, 'unknown')
+            return out
         elif rtype == 'Gd':
             out = {'code': rtype,
                    'info': 'Position control message'}
