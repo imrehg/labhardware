@@ -233,6 +233,13 @@ class GPS:
                    'info': 'Pulse mode select command'}
             out['status'] = '100PPS' if ord(resp[4]) == 1 else '1PPS'
             return out
+        elif rtype == 'Bd':
+            out = {'code': rtype,
+                   'info': 'Almanach status message'}
+            vflag = ord(resp[4])
+            out['valid almanach'] = True if vflag == 1 else False
+            out['available SVs'] = ord(resp[7])
+            return out
         elif rtype == "Ia":
             out = {'code': rtype,
                    'info': '12 channel self-test message',
