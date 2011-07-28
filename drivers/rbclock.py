@@ -4,8 +4,14 @@ Driver for the Stanford Research PRS10 Rubidium Clock
 import serial
 
 class Clock:
+    """
+    Rubidium clock that can be used with an 1 pulse-per-second (1PPS) signal to
+    keep it accurate. Controlled through serial (RS-232) interface
+    """
+    __ser = None # The private interface to the device
 
     def __init__(self, COM=0):
+        """ Connecting to the device """
         comport = '/dev/ttyUSB%d' %(COM)  # This is Linux specific like this
         # Settings from the manual
         self.__ser = serial.Serial(comport,
@@ -26,6 +32,7 @@ class Clock:
         return self.__ser.readline()
 
     def ask(self, query):
+        """ Write a command and listen for answer """
         self.write(query)
         return self.read()
 
