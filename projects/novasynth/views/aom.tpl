@@ -81,7 +81,7 @@
 
 <center>
 
-<h2>Type in the desired frequency and press Enter.</h2>
+<h2>Type in the desired value and press Enter to set it.</h2>
 <table>
   <tr><td colspan=3 class="chhead">Channel 0:</td></tr>
   <tr><td>Frequency</td><td>Level(0-1024)</td><td>Phase (0-16383)</td></tr>
