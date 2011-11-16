@@ -5,6 +5,7 @@ class N409B:
     """ Novatech 409B 171 MHz 4-channel signal generator """
 
     port = None
+    channels = []
 
     def __init__(self):
         """ Inital connection automatically """
@@ -23,6 +24,7 @@ class N409B:
                                          timeout=1)
                 good = self.setEcho(off=True)
                 self.port = i
+                self.setupChannels()
                 break
             except:
                 self.ser = None
@@ -50,8 +52,20 @@ class N409B:
 
     def getSettings(self):
         self.sendCmd("QUE")
+        reply = []
         for i in xrange(5):
-            print self.readReply()
+            reply += [self.readReply()]
+        return reply
+
+    def setupChannels(self):
+        """ Save current settings from synth """
+        settings = self.getSettings()
+        for i in xrange(4):
+            freq = int(settings[i][0:8], 16)/10000000.0 # each step is in 0.1Hz
+            amp = int(settings[i][14:18], 16)
+            phase = int(settings[i][9:13], 16)
+            self.channels += [{'no': i, 'freq': freq, 'amp': amp, 'phase': phase}]
+        print self.channels
 
     def setFreq(self, channel, value):
         channel = int(channel)
@@ -62,6 +76,8 @@ class N409B:
 
         cmd = "F%d %3.7f" %(channel, value)
         reply = self.query(cmd)
+        if reply == "OK":
+            channels[channel]['freq'] = value
         result = "Bad frequency" if reply == "?1" else reply
         return result
 
@@ -85,6 +101,8 @@ class N409B:
             level = 1024
         cmd = "V%d %d" %(channel, level)
         reply = self.query(cmd)
+        if reply == "OK":
+            channels[channel]['amp'] = level
         result = "Bad amplitude" if reply == "?7" else reply
         return result
 
