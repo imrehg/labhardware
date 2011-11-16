@@ -106,6 +106,22 @@ class N409B:
         result = "Bad amplitude" if reply == "?7" else reply
         return result
 
+    def setPhase(self, channel, phase):
+        """ Set phase """
+        channel = int(channel)
+        phase = int(phase)
+        assert(channel in [0, 1, 2, 3])
+        if level < 0:
+            level = 0
+        elif level > 16383:
+            level = 16383
+        cmd = "P%d %d" %(channel, phase)
+        reply = self.query(cmd)
+        if reply == "OK":
+            channels[channel]['phase'] = phase
+        result = "Bad phase" if reply == "?4" else reply
+        return result
+
 if __name__ == "__main__":
     synth = N409B()
 
