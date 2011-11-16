@@ -22,4 +22,9 @@ def setfreq(channel, frequency):
     result = synth.setFreq(channel, frequency)
     return result
 
+@post('/setlevel/<channel>/<level>')
+def setfreq(channel, level):
+    result = synth.setLevel(channel, level)
+    return result
+
 run(host='localhost', port=8080)

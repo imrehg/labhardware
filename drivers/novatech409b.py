@@ -74,6 +74,20 @@ class N409B:
     def setPhase(self, channel, phase):
         pass
 
+    def setLevel(self, channel, level):
+        """ Set voltage level """
+        channel = int(channel)
+        level = int(level)
+        assert(channel in [0, 1, 2, 3])
+        if level < 0:
+            level = 0
+        elif level > 1024:
+            level = 1024
+        cmd = "V%d %d" %(channel, level)
+        reply = self.query(cmd)
+        result = "Bad amplitude" if reply == "?7" else reply
+        return result
+
 if __name__ == "__main__":
     synth = N409B()
 
