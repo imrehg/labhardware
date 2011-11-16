@@ -5,7 +5,7 @@ class N409B:
     """ Novatech 409B 171 MHz 4-channel signal generator """
 
     port = None
-    channels = []
+    channels = {}
 
     def __init__(self):
         """ Inital connection automatically """
@@ -64,8 +64,7 @@ class N409B:
             freq = int(settings[i][0:8], 16)/10000000.0 # each step is in 0.1Hz
             amp = int(settings[i][14:18], 16)
             phase = int(settings[i][9:13], 16)
-            self.channels += [{'no': i, 'freq': freq, 'amp': amp, 'phase': phase}]
-        print self.channels
+            self.channels[i] = {'freq': freq, 'amp': amp, 'phase': phase}
 
     def setFreq(self, channel, value):
         channel = int(channel)
@@ -77,7 +76,7 @@ class N409B:
         cmd = "F%d %3.7f" %(channel, value)
         reply = self.query(cmd)
         if reply == "OK":
-            channels[channel]['freq'] = value
+            self.channels[channel]['freq'] = value
         result = "Bad frequency" if reply == "?1" else reply
         return result
 
@@ -102,7 +101,7 @@ class N409B:
         cmd = "V%d %d" %(channel, level)
         reply = self.query(cmd)
         if reply == "OK":
-            channels[channel]['amp'] = level
+            self.channels[channel]['amp'] = level
         result = "Bad amplitude" if reply == "?7" else reply
         return result
 
@@ -111,19 +110,21 @@ class N409B:
         channel = int(channel)
         phase = int(phase)
         assert(channel in [0, 1, 2, 3])
-        if level < 0:
-            level = 0
-        elif level > 16383:
-            level = 16383
+        if phase < 0:
+            phase = 0
+        elif phase > 16383:
+            phase = 16383
         cmd = "P%d %d" %(channel, phase)
         reply = self.query(cmd)
         if reply == "OK":
-            channels[channel]['phase'] = phase
+            self.channels[channel]['phase'] = phase
         result = "Bad phase" if reply == "?4" else reply
         return result
+
+    def getChannels(self):
+        return self.channels
 
 if __name__ == "__main__":
     synth = N409B()
 
     print synth.getSettings()
-    print synth.setFreq(0, 0.1*5)

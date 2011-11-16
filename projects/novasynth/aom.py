@@ -1,7 +1,7 @@
 import sys
 sys.path.append('../../drivers')
 import bottle
-from bottle import route, view, static_file, post, get, run
+from bottle import route, view, static_file, post, get, request, run
 import novatech409b as nova
 
 bottle.debug(True)
@@ -26,5 +26,25 @@ def setfreq(channel, frequency):
 def setfreq(channel, level):
     result = synth.setLevel(channel, level)
     return result
+
+@post('/setphase/<channel>/<phase>')
+def setphase(channel, phase):
+    result = synth.setPhase(channel, phase)
+    return result
+
+@get('/settings/')
+@get('/settings/<channel>')
+def settings(channel=None):
+    """ Return settings for all or a given channel """
+    try:
+        channel = int(channel)
+    except TypeError:
+        channel = None
+    if channel not in [0, 1, 2, 3]:
+        channel = None
+
+    channels = synth.getChannels()
+    res = channels if channel is None else channels[channel]
+    return res
 
 run(host='localhost', port=8080)
