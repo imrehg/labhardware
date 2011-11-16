@@ -21,7 +21,7 @@ class N409B:
                                          stopbits=1,
                                          parity=serial.PARITY_NONE,
                                          timeout=1)
-                self.setEcho(off=True)
+                good = self.setEcho(off=True)
                 self.port = i
                 break
             except:
@@ -44,7 +44,7 @@ class N409B:
         return self.readReply()
 
     def setEcho(self, off=True):
-        cmd = 'D' if off else 'E'
+        cmd = 'E D' if off else 'E E'
         answer = self.query(cmd)
         return answer == 'OK'
 
@@ -54,12 +54,28 @@ class N409B:
             print self.readReply()
 
     def setFreq(self, channel, value):
-        if (value > 171.1276031) || (value < 0):
+        channel = int(channel)
+        value = float(value)
+        assert(channel in [0, 1, 2, 3])
+        if (value > 171.1276031) | (value < 0.0):
             return False
 
-        cmd = ""
+        cmd = "F%d %3.7f" %(channel, value)
+        reply = self.query(cmd)
+        result = "Bad frequency" if reply == "?1" else reply
+        return result
+
+    def channelOff(self, channel):
+        """ Turn channel off by setting frequency to 0 """
+        assert(channel in [0, 1, 2, 3])
+        answer = self.setFreq(channel, 0)
+        return answer
+
+    def setPhase(self, channel, phase):
+        pass
 
 if __name__ == "__main__":
     synth = N409B()
 
     print synth.getSettings()
+    print synth.setFreq(0, 0.1*5)
