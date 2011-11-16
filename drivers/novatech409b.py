@@ -26,7 +26,7 @@ class N409B:
                 self.port = i
                 self.setupChannels()
                 break
-            except:
+            except serial.SerialException:
                 self.ser = None
 
         if self.ser is None:
