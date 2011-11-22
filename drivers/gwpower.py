@@ -23,11 +23,16 @@ class PowerMeter:
             try:
                 self.ser = serial.Serial("%s%d" %(portbase, i),
                                          baudrate=2400,
-                                         bytesize=7,
+                                         bytesize=8,
                                          stopbits=1,
-                                         parity=serial.PARITY_ODD,
+                                         parity=serial.PARITY_NONE,
                                          timeout=1)
                 self.port = i
+                # Required, from snooping
+                self.ser.setRTS(0)
+                self.ser.setRTS(0)
+                self.ser.setDTR(1)
+                self.ser.setDTR(1)
                 break
             except serial.SerialException:
                 self.ser = None
