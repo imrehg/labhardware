@@ -23,7 +23,6 @@ if __name__ == "__main__":
     print "Used camera mode: %s" %(cam0.mode)
     print "Camera FPS: %.1f" %(cam0.fps)
 
-
     matplotlib.interactive(True)
     fig = pl.figure()
     ax = fig.add_subplot(111)
@@ -31,19 +30,21 @@ if __name__ == "__main__":
     cam0.start(interactive=True)
     imgnum = 0
     image = None
+    ellipse = None
     start = time()
     while True:
         try:
-            if image is not None:
-                image.remove()
             data = cam0.current_image
-            image = ax.imshow(data)
+            data = data[0:640, 0:480] # this somehow speeds things up
+            if image is not None:
+                image.set_data(data)
+            else:
+                image = ax.imshow(data)
             pl.draw()
             imgnum += 1
-            # print "Image #%d" %(imgnum)
             if (imgnum % 50) == 0:
                 now = time()
-                print "Displayed FPS: %.2f" %(100 / (now-start))
+                print "Displayed FPS: %.2f" %(50 / (now-start))
                 start = now
         except KeyboardInterrupt:
             print "Stopping"
