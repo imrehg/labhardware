@@ -1,11 +1,11 @@
 import pydc1394 as fw
-from time import sleep
+from time import sleep, time
 import numpy as np
 import pylab as pl
 
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FixedLocator, FormatStrFormatter
-import matplotlib, time
+import matplotlib
 
 if __name__ == "__main__":
     l = fw.DC1394Library()
@@ -18,9 +18,10 @@ if __name__ == "__main__":
     for feat in cam0.features:
         print "%s : %s" %(feat, cam0.__getattribute__(feat).val)
 
-    print cam0.modes
+    print "Camera modes:", cam0.modes
     cam0.mode = "640x480_Y8"  # the Y16 mode does not seem to work
-    print cam0.mode
+    print "Used camera mode: %s" %(cam0.mode)
+    print "Camera FPS: %.1f" %(cam0.fps)
 
 
     matplotlib.interactive(True)
@@ -30,15 +31,20 @@ if __name__ == "__main__":
     cam0.start(interactive=True)
     imgnum = 0
     image = None
+    start = time()
     while True:
         try:
-            # sleep(0.05)
             if image is not None:
                 image.remove()
-            image = ax.imshow(cam0.current_image)
+            data = cam0.current_image
+            image = ax.imshow(data)
             pl.draw()
             imgnum += 1
-            print "Image #%d" %(imgnum)
+            # print "Image #%d" %(imgnum)
+            if (imgnum % 50) == 0:
+                now = time()
+                print "Displayed FPS: %.2f" %(100 / (now-start))
+                start = now
         except KeyboardInterrupt:
             print "Stopping"
             break
