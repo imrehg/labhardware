@@ -1,3 +1,4 @@
+from __future__ import division
 import pydc1394 as fw
 from time import sleep, time
 import numpy as np
@@ -6,6 +7,8 @@ import pylab as pl
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FixedLocator, FormatStrFormatter
 import matplotlib
+
+import gaussfitter as gf
 
 if __name__ == "__main__":
     l = fw.DC1394Library()
@@ -24,22 +27,31 @@ if __name__ == "__main__":
     print "Camera FPS: %.1f" %(cam0.fps)
 
     matplotlib.interactive(True)
-    fig = pl.figure()
-    ax = fig.add_subplot(111)
+    fig = pl.figure(num=1, figsize=(10, 10))
+    ax = fig.add_subplot(211)
+    sideax = fig.add_subplot(212)
 
     cam0.start(interactive=True)
     imgnum = 0
     image = None
+    cross = None
+    pos = np.array(range(0, 640))
     ellipse = None
+    fit = None
     start = time()
     while True:
         try:
             data = cam0.current_image
-            data = data[0:640, 0:480] # this somehow speeds things up
+            hline = data[280, :]
             if image is not None:
                 image.set_data(data)
+                cross.set_ydata(hline)
             else:
-                image = ax.imshow(data)
+                image = ax.imshow(data)         
+                cross, = sideax.plot(pos, hline, 'k-')
+                cross.axes.set_ylim([0, 255])
+                cross.axes.set_xlim([0, 640])
+                np.save('img_%s' %(str(int(time()))[4:]), data)
             pl.draw()
             imgnum += 1
             if (imgnum % 50) == 0:
