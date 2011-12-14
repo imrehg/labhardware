@@ -8,7 +8,7 @@ from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FixedLocator, FormatStrFormatter
 import matplotlib
 
-import gaussfitter as gf
+import beam
 
 if __name__ == "__main__":
     l = fw.DC1394Library()
@@ -37,21 +37,46 @@ if __name__ == "__main__":
     cross = None
     pos = np.array(range(0, 640))
     ellipse = None
-    fit = None
+    fit = None    
+    dimx, dimy = 640, 480
+    xl = np.array(range(0, dimx))
+    yl = np.array(range(0, dimy))
     start = time()
     while True:
         try:
             data = cam0.current_image
-            hline = data[280, :]
+            xx, yy, dx, dy, angle = beam.analyze(data)
+            angle = np.pi - angle
+            angle = angle/2
+            xcut = data[yy, :]
+            ycut = data[:, xx]
+
             if image is not None:
                 image.set_data(data)
-                cross.set_ydata(hline)
+                centre.set_ydata(yy)
+                centre.set_xdata(xx)
+                crossx.set_ydata(xcut)
+                # xaxis.set_xdata([xx-np.cos(angle)*dx/2, xx+np.cos(angle)*dx/2])
+                # xaxis.set_ydata([yy-np.sin(angle)*dx/2, yy+np.sin(angle)*dx/2])
             else:
-                image = ax.imshow(data)         
-                cross, = sideax.plot(pos, hline, 'k-')
-                cross.axes.set_ylim([0, 255])
-                cross.axes.set_xlim([0, 640])
-                np.save('img_%s' %(str(int(time()))[4:]), data)
+                image = ax.imshow(data, vmin=0, vmax=256)
+
+                # xaxis, = ax.plot([xx-np.cos(angle)*dx/2, xx+np.cos(angle)*dx/2], [yy-np.sin(angle)*dx/2, yy+np.sin(angle)*dx/2], 'k-')
+
+                centre, = ax.plot(xx, yy, '+', markersize=10)
+                centre.axes.set_xlim([0, dimx])
+                centre.axes.set_ylim([dimy-1, 0])
+
+                # Cross section
+                crossx, = sideax.plot(xl, xcut)
+                crossx.axes.set_ylim([254, 0])
+                crossx.axes.set_xlim([0, 640])
+
+                # stamp = str(int(time()))[4:]
+                # outname = 'img_%s' %(stamp)
+                # np.save(outname, data)
+                # pl.savefig("%s.pdf" %outname)
+                # pl.savefig("%s.png" %outname)
             pl.draw()
             imgnum += 1
             if (imgnum % 50) == 0:
