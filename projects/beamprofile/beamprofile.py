@@ -8,7 +8,21 @@ from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FixedLocator, FormatStrFormatter
 import matplotlib
 
-import beam
+import fastfit
+
+def sizetext(sx, sy):
+    """
+    Check if the difference between the two axes are similar or different
+    Returns displayable text
+    """
+    if abs(sx - sy)/(sx+sy) < 0.05:
+        csign = '~'
+    elif (sx > sy):
+        csign = '>'
+    else:
+        csign = '<'
+    ctext = "sx  |  sy\n%.1f %s %.1f" %(sx, csign, sy)
+    return ctext
 
 if __name__ == "__main__":
     l = fw.DC1394Library()
@@ -17,72 +31,92 @@ if __name__ == "__main__":
 
     print "Connected to: %s / %s" %(cam0.vendor, cam0.model)
 
+    # Settings
+    cam0.framerate.mode = 'manual'
+    cam0.framerate.val = 25
+    cam0.exposure.mode = 'manual'
+    cam0.exposure.val = cam0.exposure.range[0]
+    cam0.shutter.mode = 'manual'
+    print cam0.shutter.range
+    print cam0.exposure.range
+    cam0.shutter.val = cam0.shutter.range[0]
+    cam0.shutter.val = cam0.shutter.range[0]
+
     print "\nFeatures\n", "="*30
     for feat in cam0.features:
-        print "%s : %s" %(feat, cam0.__getattribute__(feat).val)
+        try:
+            val = cam0.__getattribute__(feat).val
+        except:
+            val = '??'
+        try:
+            mode = cam0.__getattribute__(feat).mode
+        except:
+            mode = '??'
+
+        print "%s : %s (mode: %s)" %(feat, val, mode)
 
     print "Camera modes:", cam0.modes
     cam0.mode = "640x480_Y8"  # the Y16 mode does not seem to work
     print "Used camera mode: %s" %(cam0.mode)
-    print "Camera FPS: %.1f" %(cam0.fps)
 
     matplotlib.interactive(True)
     fig = pl.figure(num=1, figsize=(10, 10))
-    ax = fig.add_subplot(211)
-    sideax = fig.add_subplot(212)
+    ax = fig.add_subplot(111)
 
     cam0.start(interactive=True)
-    imgnum = 0
     image = None
-    cross = None
-    pos = np.array(range(0, 640))
-    ellipse = None
-    fit = None    
     dimx, dimy = 640, 480
-    xl = np.array(range(0, dimx))
-    yl = np.array(range(0, dimy))
-    start = time()
-    while True:
+
+    while True:  # image collection and display
         try:
             data = cam0.current_image
-            xx, yy, dx, dy, angle = beam.analyze(data)
-            angle = np.pi - angle
-            angle = angle/2
-            xcut = data[yy, :]
-            ycut = data[:, xx]
+            text = "Data range: %d - %d" %(np.min(data), np.max(data))
+            xx, yy, dx, dy, angle = fastfit.d4s(data)
+            angle *= -1
+            adeg = "%.1f deg" %(angle / np.pi * 180)
+            xr, yr = fastfit.getellipse(xx, yy, dx, dy, angle)
+            xxx = [xx - dx/2*np.cos(angle), xx + dx/2*np.cos(angle)]
+            xxy = [yy + dx/2*np.sin(angle), yy - dx/2*np.sin(angle)]
+            yyx = [xx + dy/2*np.sin(angle), xx - dy/2*np.sin(angle)]
+            yyy = [yy + dy/2*np.cos(angle), yy - dy/2*np.cos(angle)]
 
-            if image is not None:
-                image.set_data(data)
-                centre.set_ydata(yy)
-                centre.set_xdata(xx)
-                crossx.set_ydata(xcut)
-                # xaxis.set_xdata([xx-np.cos(angle)*dx/2, xx+np.cos(angle)*dx/2])
-                # xaxis.set_ydata([yy-np.sin(angle)*dx/2, yy+np.sin(angle)*dx/2])
-            else:
+            st = sizetext(dx/4, dy/4)
+
+            if image is None:  # First display, set up output screen
+                # the data
                 image = ax.imshow(data, vmin=0, vmax=256)
 
-                # xaxis, = ax.plot([xx-np.cos(angle)*dx/2, xx+np.cos(angle)*dx/2], [yy-np.sin(angle)*dx/2, yy+np.sin(angle)*dx/2], 'k-')
-
+                # extra display: centre marker, D4s ellipse, axes
                 centre, = ax.plot(xx, yy, '+', markersize=10)
+                ellipse, = ax.plot(xr, yr, 'k-', linewidth=2)
+                ax1, ax2, = ax.plot(xxx, xxy, 'k-', yyx, yyy, 'k-')
+
+                # reposition picture, since plot ruins imshow's limits
                 centre.axes.set_xlim([0, dimx])
                 centre.axes.set_ylim([dimy-1, 0])
 
-                # Cross section
-                crossx, = sideax.plot(xl, xcut)
-                crossx.axes.set_ylim([254, 0])
-                crossx.axes.set_xlim([0, 640])
+                # Data headers
+                sztext = fig.text(0.5, 0.81, st, horizontalalignment='center', fontsize=63)
+                atext = fig.text(0.5, 0.10, adeg, horizontalalignment='center', fontsize=55)
+                uptext = fig.text(0.5, 0.05, text, horizontalalignment='center', fontsize=25)
+                # np.save('test', data)
+            else:  # Every other iteration just update data
+                image.set_data(data)
 
-                # stamp = str(int(time()))[4:]
-                # outname = 'img_%s' %(stamp)
-                # np.save(outname, data)
-                # pl.savefig("%s.pdf" %outname)
-                # pl.savefig("%s.png" %outname)
+                centre.set_xdata(xx)
+                centre.set_ydata(yy)
+
+                ellipse.set_xdata(xr)
+                ellipse.set_ydata(yr)
+                ax1.set_xdata(xxx)
+                ax1.set_ydata(xxy)
+                ax2.set_xdata(yyx)
+                ax2.set_ydata(yyy)
+
+                uptext.set_text(text)
+                sztext.set_text(st)
+                atext.set_text(adeg)
             pl.draw()
-            imgnum += 1
-            if (imgnum % 50) == 0:
-                now = time()
-                print "Displayed FPS: %.2f" %(50 / (now-start))
-                start = now
         except KeyboardInterrupt:
             print "Stopping"
             break
