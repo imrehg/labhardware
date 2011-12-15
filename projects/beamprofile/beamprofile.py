@@ -40,7 +40,6 @@ if __name__ == "__main__":
     print cam0.shutter.range
     print cam0.exposure.range
     cam0.shutter.val = cam0.shutter.range[0]
-    cam0.shutter.val = cam0.shutter.range[0]
 
     print "\nFeatures\n", "="*30
     for feat in cam0.features:
