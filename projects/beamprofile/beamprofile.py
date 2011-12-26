@@ -21,7 +21,7 @@ def sizetext(sx, sy):
         csign = '>'
     else:
         csign = '<'
-    ctext = "sx  |  sy\n%.1f %s %.1f" %(sx, csign, sy)
+    ctext = "wx  |  wy\n%.1f %s %.1f" %(sx, csign, sy)
     return ctext
 
 if __name__ == "__main__":
@@ -59,12 +59,14 @@ if __name__ == "__main__":
     print "Used camera mode: %s" %(cam0.mode)
 
     matplotlib.interactive(True)
-    fig = pl.figure(num=1, figsize=(10, 10))
+    fs = 12.5
+    fig = pl.figure(num=1, figsize=(fs, fs))
     ax = fig.add_subplot(111)
 
     cam0.start(interactive=True)
     image = None
     dimx, dimy = 640, 480
+    pixelsize = 5.6
 
     while True:  # image collection and display
         try:
@@ -79,24 +81,25 @@ if __name__ == "__main__":
             yyx = [xx + dy/2*np.sin(angle), xx - dy/2*np.sin(angle)]
             yyy = [yy + dy/2*np.cos(angle), yy - dy/2*np.cos(angle)]
 
-            st = sizetext(dx/4, dy/4)
+            st = sizetext(dx/2*pixelsize, dy/2*pixelsize)
 
             if image is None:  # First display, set up output screen
                 # the data
-                image = ax.imshow(data, vmin=0, vmax=256)
+                image = ax.imshow(data, vmin=0, vmax=255, cmap='Paired')
 
                 # extra display: centre marker, D4s ellipse, axes
                 centre, = ax.plot(xx, yy, '+', markersize=10)
-                ellipse, = ax.plot(xr, yr, 'k-', linewidth=2)
-                ax1, ax2, = ax.plot(xxx, xxy, 'k-', yyx, yyy, 'k-')
+                ellipse, = ax.plot(xr, yr, 'k-', linewidth=3)
+                ax1, ax2, = ax.plot(xxx, xxy, 'k-', yyx, yyy, 'k-', linewidth=2)
 
                 # reposition picture, since plot ruins imshow's limits
                 centre.axes.set_xlim([0, dimx])
                 centre.axes.set_ylim([dimy-1, 0])
 
                 # Data headers
-                sztext = fig.text(0.5, 0.81, st, horizontalalignment='center', fontsize=63)
-                atext = fig.text(0.5, 0.10, adeg, horizontalalignment='center', fontsize=55)
+                sztext = fig.text(0.5, 0.965, 'wx/wy = Gaussian beam width (um) along principal axes (D4s/2*pixelsize)', horizontalalignment='center', fontsize=20)
+                sztext = fig.text(0.5, 0.81, st, horizontalalignment='center', fontsize=67)
+                atext = fig.text(0.5, 0.10, adeg, horizontalalignment='center', fontsize=65)
                 uptext = fig.text(0.5, 0.05, text, horizontalalignment='center', fontsize=25)
                 # np.save('test', data)
             else:  # Every other iteration just update data
