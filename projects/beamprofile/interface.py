@@ -40,8 +40,12 @@ def analyze(data):
     xwidth = (dx*np.cos(angle)**2 + dy*np.sin(angle)**2)/4.0
     ywidth = (dx*np.sin(angle)**2 + dy*np.cos(angle)**2)/4.0
 
-    xc = int(np.round(xx))
-    yc = int(np.round(yy))
+    try:
+        xc = int(np.round(xx))
+        yc = int(np.round(yy))
+    except ValueError:
+        xc = 320
+        yc = 240
     xcut = data[yc, :]
     ycut = data[:, xc]
     xline = range(0, sx)
