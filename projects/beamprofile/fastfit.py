@@ -34,7 +34,7 @@ def getellipse(xx, yy, dx, dy, angle):
     t = np.linspace(0, np.pi*2, 101)
     a = dx/2
     b = dy/2
-    angle = np.pi-angle
+    angle = np.pi + angle  # instead doing multiplication with -1 in the input
     xr = a * np.cos(t) * np.cos(angle) - b * np.sin(t) * np.sin(angle) + xx
     yr = a * np.cos(t) * np.sin(angle) + b * np.sin(t) * np.cos(angle) + yy
     return xr, yr

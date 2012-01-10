@@ -73,8 +73,7 @@ if __name__ == "__main__":
             data = cam0.current_image
             text = "Data range: %d - %d" %(np.min(data), np.max(data))
             xx, yy, dx, dy, angle = fastfit.d4s(data)
-            angle *= -1
-            adeg = "%.1f deg" %(angle / np.pi * 180)
+            adeg = "%.1f deg" %(-angle / np.pi * 180)
             xr, yr = fastfit.getellipse(xx, yy, dx, dy, angle)
             xxx = [xx - dx/2*np.cos(angle), xx + dx/2*np.cos(angle)]
             xxy = [yy + dx/2*np.sin(angle), yy - dx/2*np.sin(angle)]
