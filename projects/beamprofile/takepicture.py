@@ -45,7 +45,8 @@ if __name__ == "__main__":
 
     stamp = strftime("%y%m%d_%H%M%S")
     outname = 'beamprofile_%s' %(stamp)
-    np.save(outname, data)
+    # save txt format for interoperation
+    np.savetxt(outname+".txt", data, fmt="%d")
 
     image = ax.imshow(data, vmin=0, vmax=256)
     pl.xlabel('x')
