@@ -9,6 +9,7 @@ from matplotlib.ticker import LinearLocator, FixedLocator, FormatStrFormatter
 import matplotlib
 
 import beam
+import interface
 
 if __name__ == "__main__":
     l = fw.DC1394Library()
@@ -27,8 +28,7 @@ if __name__ == "__main__":
     print "Camera FPS: %.1f" %(cam0.fps)
 
     matplotlib.interactive(True)
-    fig = pl.figure(num=1, figsize=(10, 10))
-    ax = fig.add_subplot(111)
+    fig = pl.figure(num=1, figsize=(12.5, 12.5))
 
     cam0.start(interactive=True)
     imgnum = 0
@@ -48,9 +48,7 @@ if __name__ == "__main__":
     # save txt format for interoperation
     np.savetxt(outname+".txt", data, fmt="%d")
 
-    image = ax.imshow(data, vmin=0, vmax=256)
-    pl.xlabel('x')
-    pl.ylabel('y')
+    interface.createiface(data)
     pl.title(outname)
 
     pl.savefig("%s.png" %outname)
