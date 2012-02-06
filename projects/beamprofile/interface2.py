@@ -30,10 +30,17 @@ def gauss(x, x0, sx, scale):
 def analyze(data):
     """ Do all the analysis that's needed to create the interface """
     xx, yy, dx, dy, angle = fastfit.d4s(data)
-    b, a, xx, yy, ddx, ddy, rot = gaussfitter([0, np.max(data), xx, yy, dx/4, dy/4, angle/np.pi*180])
-    ddx *= 4
-    ddy *= 4
-    angle = rot/180*np.pi
+    try:
+        inparams = [0, np.max(data), xx, yy, dx/4, dy/4, (angle-np.pi)/np.pi*180]
+        outparams = gaussfitter.gaussfit(data, params=inparams)
+        b, a, xx, yy, ddx, ddy, rot = outparams
+        dx = 4*ddx
+        dy = 4*ddy
+        angle = rot/180*np.pi+np.pi/2
+        print "Gaussian fit"
+    except (ValueError):
+        print "D4s fit"
+        pass
     xr, yr = fastfit.getellipse(xx, yy, dx, dy, angle)
     # fix axes calculation so no more -1 is needed
     angle *= -1
