@@ -108,7 +108,7 @@ def createiface(data):
     axCutx.set_ylim([256, -10])
     axCutx.set_yticks([0, 128, 256])
 
-    htext = fig.text(0.5, 0.965, 'wx/wy = Gaussian beam width (um) along principal axes (D4s/2*pixelsize)', horizontalalignment='center', fontsize=20)
+    htext = fig.text(0.5, 0.965, 'wx/wy = Gaussian beam width (um) along principal axes (Gaussian*pixelsize)', horizontalalignment='center', fontsize=20)
     sztext = fig.text(0.5, 0.81, st, horizontalalignment='center', fontsize=67)
     atext = fig.text(0.5, 0.10, adeg, horizontalalignment='center', fontsize=65)
     uptext = fig.text(0.5, 0.05, text, horizontalalignment='center', fontsize=25)
