@@ -4,7 +4,7 @@ import pylab as pl
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 import fastfit
-import gaussfitter
+import gaussfit
 
 # Set for our camera
 sx, sy, pixelsize = 640, 480, 5.6
@@ -31,12 +31,13 @@ def analyze(data):
     """ Do all the analysis that's needed to create the interface """
     xx, yy, dx, dy, angle = fastfit.d4s(data)
     try:
-        inparams = [0, np.max(data), xx, yy, dx/4, dy/4, (angle-np.pi)/np.pi*180]
-        outparams = gaussfitter.gaussfit(data, params=inparams)
-        b, a, xx, yy, ddx, ddy, rot = outparams
+        outparams = gaussfit.fitgaussian(data)
+        # Order somehow changed between x and y
+        if outparams is None:
+            return None
+        (a, y, x, ddy, ddx, angle, b) = outparams
         dx = 4*ddx
         dy = 4*ddy
-        angle = rot/180*np.pi+np.pi/2
         print "Gaussian fit"
     except (ValueError):
         print "D4s fit"
@@ -68,7 +69,10 @@ def analyze(data):
     return (xx, yy, dx, dy, angle, xr, yr, adeg, xxx, xxy, yyx, yyy, xwidth, ywidth, xc, yc, xcut, ycut, xcutg, ycutg)
 
 def createiface(data):
-    (xx, yy, dx, dy, angle, xr, yr, adeg, xxx, xxy, yyx, yyy, xwidth, ywidth, xc, yc, xcut, ycut, xcutg, ycutg) = analyze(data)
+    result = analyze(data)
+    if result is None:
+        return None
+    (xx, yy, dx, dy, angle, xr, yr, adeg, xxx, xxy, yyx, yyy, xwidth, ywidth, xc, yc, xcut, ycut, xcutg, ycutg) = result
 
     st = sizetext(dx/2*pixelsize, dy/2*pixelsize)
     text = "Data range: %d - %d" %(np.min(data), np.max(data))
@@ -123,7 +127,10 @@ def updateiface(data, elements):
     data : input data
     elements : output of createiface(data)
     """
-    (xx, yy, dx, dy, angle, xr, yr, adeg, xxx, xxy, yyx, yyy, xwidth, ywidth, xc, yc, xcut, ycut, xcutg, ycutg) = analyze(data)
+    result = analyze(data)
+    if result is None:
+        return None
+    (xx, yy, dx, dy, angle, xr, yr, adeg, xxx, xxy, yyx, yyy, xwidth, ywidth, xc, yc, xcut, ycut, xcutg, ycutg) = result
     (fig, img, centre, ellipse, ax1, ax2, xl, xg, yl, yg, sztext, uptext, atext) = elements
     xline = range(0, sx)
     yline = range(0, sy)
@@ -152,6 +159,7 @@ def updateiface(data, elements):
     sztext.set_text(st)
     atext.set_text(adeg)
     
+    return elements
 
 if __name__ == "__main__":
     filename = "test.txt"

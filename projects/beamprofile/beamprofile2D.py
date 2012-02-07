@@ -73,9 +73,11 @@ if __name__ == "__main__":
         try:
             data = cam0.current_image
             if elements is None:  # First display, set up output screen
-                elements = interface.createiface(data)
+                result = elements = interface.createiface(data)
             else:  # Every other iteration just update data
-                interface.updateiface(data, elements)
+                result = interface.updateiface(data, elements)
+            if result is None:
+                break
             pl.draw()
         except KeyboardInterrupt:
             print "Stopping"
