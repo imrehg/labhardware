@@ -34,7 +34,10 @@ linear_type = config.getboolean('Experiment','linear_type')
 logger = logging.getLogger()
 logfile = config.get('Setup','logfile')
 if logfile == 'auto':
-    logfile = "sweep_%s.log" %(strftime("%y%m%d_%H%M%S"))
+    logname = "sweep_%s" %(strftime("%y%m%d_%H%M%S"))
+    logfile = "%s.log" %(logname)
+else:
+    logname = logfile
 hdlr = logging.FileHandler(logfile)
 formatter = logging.Formatter('%(message)s')
 hdlr.setFormatter(formatter)
@@ -45,6 +48,9 @@ f = open(configfile)
 for line in f:
     logger.info("# %s" %line.strip())
 f.close()
+logger.info("#"*10)
+comment = raw_input("Comment: ")
+logger.info("# Comment: %s" %comment)
 logger.info("#"*10)
 logger.info("# Frequency (Hz), LogMagnitude (dB), Phase (deg)")
 
@@ -57,7 +63,7 @@ device.write("DISP 1,1")
 device.write("MGRP 2,3")  # Swept Sine measurement group p437
 device.write("MEAS 2,47")  # Frequency response p437
 device.write("VIEW 0,0")  # Log magnitude, p440
-device.write("VIEW 1,5")  # Phase, p440
+device.write("VIEW 1,6")  # Phase, p440
 
 # Set start and stop frequencies
 device.write("SSTR 2,%d" %(start_freq))
@@ -106,6 +112,7 @@ pl.semilogx(f, data[:, 0])
 pl.xlabel("Frequency (Hz)")
 pl.ylabel("LogMagnitude (dB)")
 pl.xlim([f[0], f[-1]])
+pl.title(comment)
 
 pl.subplot(212)
 pl.semilogx(f, data[:, 1])
@@ -113,5 +120,6 @@ pl.xlabel("Frequency (Hz)")
 pl.ylabel("Phase (deg)")
 pl.xlim([f[0], f[-1]])
 
+pl.savefig("%s.png" %(logname))
 pl.show()
     
