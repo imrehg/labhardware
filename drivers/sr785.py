@@ -1,5 +1,6 @@
 import visa
 from re import match
+from numpy import array
 
 class StanfordSR785:
 
@@ -74,6 +75,21 @@ class StanfordSR785:
             x = x << 1
         return bin(word), herecode
 
+    def getdata(self, channel=2):
+        if channel == 0 or channel == 2:
+            data1 = [float(num) for num in self.ask("DSPY ? 0").split(',')]
+            data1 = array(data1[0:-1])
+        if channel == 1 or channel == 2:
+            data2 = [float(num) for num in self.ask("DSPY ? 1").split(',')]
+            data2 = array(data2[0:-1])
+
+        if channel == 0:
+            out = data1
+        elif channel == 1:
+            out = data2
+        else:
+            out = array(zip(data1, data2))
+        return out
 
 if __name__ == "__main__":
     import numpy as np

@@ -1,0 +1,8 @@
+[Setup]
+logfile: auto
+gpib_num: 18
+[Experiment]
+start_freq: 100
+stop_freq: 1000
+points: 16
+linear_type: false
