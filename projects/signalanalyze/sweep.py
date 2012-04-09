@@ -60,6 +60,7 @@ device = sr785.StanfordSR785(GPIB)
 # Turn both displays live
 device.write("DISP 0,1")
 device.write("DISP 1,1")
+device.write("A1RG 1; A2RG 1")  # turn on auto-range for both channels
 device.write("MGRP 2,3")  # Swept Sine measurement group p437
 device.write("MEAS 2,47")  # Frequency response p437
 device.write("VIEW 0,0")  # Log magnitude, p440
