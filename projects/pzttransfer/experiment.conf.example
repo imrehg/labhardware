@@ -1,0 +1,5 @@
+[Experiment]
+pdchannel = 3
+voltlimit = 10
+triggerchannel = 0
+repeats = 20

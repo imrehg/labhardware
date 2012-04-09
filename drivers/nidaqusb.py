@@ -49,6 +49,7 @@ class Task():
     def __init__(self, device, channel="ai0", maxsample=1000, rate=1000, voltlimit=10.0, finite=True):
         """ Set up a voltage measurement task """
         self.taskHandle = TaskHandle(0)
+        self.device = device
         self.channelName = "%s/%s" %(device.name, channel)
         self.maxsample = maxsample
         self.finite = finite
@@ -71,6 +72,14 @@ class Task():
                                         samples,
                                         uInt64(self.maxsample)
                                         )
+            )
+
+    def SetTrigger(self, triggerchannel="PFI0"):
+        channel = triggerchannel
+        CHK(nidaq.DAQmxCfgDigEdgeStartTrig(self.taskHandle,
+                                           channel,
+                                           DAQmx_Val_Rising
+                                           )
             )
 
     def Start(self):
