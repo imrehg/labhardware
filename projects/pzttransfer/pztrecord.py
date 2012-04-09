@@ -70,10 +70,9 @@ while True:
                        )
     task0.SetTrigger("PFI%d" %(triggerchannel))
 
-    reps = 10
-    amplitudes = np.zeros(reps)
-    phases = np.zeros(reps)
-    for x in range(reps):
+    amplitudes = np.zeros(repeats)
+    phases = np.zeros(repeats)
+    for x in range(repeats):
         task0.Start()
         read, data = task0.Read()
         task0.Stop()
