@@ -79,6 +79,8 @@ while True:
         p, vf = fitting.dofit(freq, datatime, data, 2)
         amplitudes[x] = p[0]
         phases[x] = p[1]
+        sys.stdout.write("#")
+    sys.stdout.write("\n")
 
     amean, adev = np.mean(amplitudes), np.std(amplitudes)
     pmean, pdev = np.mean(phases), np.std(phases)
