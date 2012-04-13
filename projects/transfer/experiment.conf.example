@@ -1,0 +1,11 @@
+[Setup]
+awgdev = USB0::0x0957::0x1607::MY50001586
+[Experiment]
+inchannel = 3
+triggerchannel = 0
+voltlimit = 1
+repeats = 10
+startfreq = 1
+stopfreq = 30000
+numfreq = 60
+linscale = false
