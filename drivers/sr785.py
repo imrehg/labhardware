@@ -17,8 +17,7 @@ class StanfordSR785:
             error = True
 
         if error:
-            print "Exception: No %s on this gpib channel: %d" %(self.__type, gpib)
-            return None
+            raise IOError("Exception: No %s on this gpib channel: %d" %(self.__type, gpib))
         else:
             print "Success: %s found" %(self.__type)
 
