@@ -2,3 +2,6 @@
 *.pyo
 *.log
 *~
+*.tif
+*.asc
+*.csv
