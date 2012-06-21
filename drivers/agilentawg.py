@@ -3,9 +3,14 @@ from re import match
 
 class AgilentAWG:
 
-    def __init__(self, gpib):
-        ''' Initialize device '''
-        self.device = visa.instrument("GPIB::%d" %(gpib))
+    def __init__(self, name):
+        '''
+        Initialize device
+
+        Input parameter:
+        name: usually something like GPIB::XY, or USB::XYZ the device id
+        '''
+        self.device = visa.instrument(name)
         if (not self.__TestConnection()):
             print "No arbitrary waveform generator on this GPIB channel..."
             return None
@@ -15,6 +20,7 @@ class AgilentAWG:
     def __TestConnection(self):
         ''' Test if we have the right device by matching id number '''
         id = self.device.ask("*IDN?")
+        ## This needs re-thinking if more than one device will be supported
         if (match(".*,33120A,.*", id)):
             found = True
         else:
@@ -46,3 +52,7 @@ class AgilentAWG:
         '''
         return float(self.device.ask("MEASURE:VOLTAGE:DC? %fV, %fV"
             %(vrange, vresolution)))
+
+if __name__ == "__main__":
+    address = "USB0::0x0957::0x1607::MY50001586::INSTR"
+    device = AgilentAWG(address)
