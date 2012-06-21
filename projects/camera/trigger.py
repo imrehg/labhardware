@@ -71,11 +71,18 @@ class TriggerPulse():
         # pulses = numpy.array([val, 0, 0, 0, 0, val, val, val], dtype=numpy.uint32)
         # pulses = numpy.array([val, 0, val, 0, val, 0, val, 0], dtype=numpy.uint32)
         # external clock: 50kHz: 1 time unit is 20us
-        sequence = [(0, 5, 3),  # pulse 1: 100us
-                    (5, 50, 0), # delay: 1ms
-                    (50, 55, 3), # pulse 2: 100us:
-                    (55, 10000, 0), # long delay
+        # # Short gap (1ms)
+        sequence = [(0, 5, 1),  # pulse 1: 100us
+                    (5, 55, 0), # delay: 1ms
+                    (55, 60, 1), # pulse 2: 100us:
+                    (60, 10000, 0), # long delay
                     ]
+        # # Long gap (1s)
+        # sequence = [(0, 5, 3),  # pulse 1: 100us
+        #             (5, 50005, 0), # delay: 1s
+        #             (50005, 50010, 3), # pulse 2: 100us:
+        #             (50010, 60000, 0), # long delay
+        #             ]
         pulses = numpy.zeros((500, 1), dtype=numpy.uint32)
         maxval = sequence[-1][1]
         pulses = numpy.zeros((maxval, 1), dtype=numpy.uint32)
