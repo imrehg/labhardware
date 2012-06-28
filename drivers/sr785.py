@@ -1,6 +1,6 @@
 import visa
 from re import match
-from numpy import array
+from numpy import array, append
 
 class StanfordSR785:
 
@@ -89,6 +89,40 @@ class StanfordSR785:
         else:
             out = array(zip(data1, data2))
         return out
+
+    def pulldata(self, chn=2):
+        """
+        Pull data from signal analyzer
+
+        Input:
+        ------
+        chn: 0 - channel A, 1 - channel B, 2 - both A & B
+
+        Currently assumes same length in display A and B
+        """
+        q = 1 if chn >= 1 else 0
+        n = int(self.ask("DSPN ? %d" %(q)))
+
+        datax = array([])
+        for i in range(n):
+            xi = float(self.ask("DBIN ? 0, %d" %i))
+            datax = append(datax, xi)
+
+        if chn == 0 or chn == 2:
+            data1 = [float(num) for num in self.ask("DSPY ? 0").split(',')]
+            data1 = array(data1[0:-1])
+        if chn == 1 or chn == 2:
+            data2 = [float(num) for num in self.ask("DSPY ? 1").split(',')]
+            data2 = array(data2[0:-1])
+
+        if chn == 0:
+            out = array(zip(datax, data1))
+        elif chn == 1:
+            out = array(zip(datax, data2))
+        else:
+            out = array(zip(datax, data1, data2))
+        return out
+
 
 if __name__ == "__main__":
     import numpy as np
