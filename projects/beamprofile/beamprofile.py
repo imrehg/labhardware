@@ -26,9 +26,11 @@ def sizetext(sx, sy):
     return ctext
 
 if __name__ == "__main__":
+    channel = raw_input("Which camera you want to see (0/1)?")
+    channel = int(channel)
     l = fw.DC1394Library()
     cams = l.enumerate_cameras()
-    cam0 = fw.Camera(l, cams[0]['guid'], isospeed=800)
+    cam0 = fw.Camera(l, cams[channel]['guid'], isospeed=800)
 
     print "Connected to: %s / %s" %(cam0.vendor, cam0.model)
 
