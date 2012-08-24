@@ -14,6 +14,7 @@ class N409B:
         else:
             portbase = 'COM'
 
+        self.ser = None
         for i in xrange(10):
             try:
                 self.ser = serial.Serial("%s%d" %(portbase, i),
@@ -22,12 +23,14 @@ class N409B:
                                          stopbits=1,
                                          parity=serial.PARITY_NONE,
                                          timeout=1)
-                good = self.setEcho(off=True)
-                self.port = i
-                self.setupChannels()
-                break
-            except serial.SerialException:
-                self.ser = None
+                if self.setEcho(off=True):
+                    self.port = i
+                    self.setupChannels()
+                    break
+                else:
+                    self.ser = None
+            except (serial.SerialException):
+                pass
 
         if self.ser is None:
             print "No connection...."
@@ -60,11 +63,17 @@ class N409B:
     def setupChannels(self):
         """ Save current settings from synth """
         settings = self.getSettings()
-        for i in xrange(4):
-            freq = int(settings[i][0:8], 16)/10000000.0 # each step is in 0.1Hz
-            amp = int(settings[i][14:18], 16)
-            phase = int(settings[i][9:13], 16)
-            self.channels[i] = {'freq': freq, 'amp': amp, 'phase': phase}
+        good = True if settings else False
+        try:
+            for i in xrange(4):
+                freq = int(settings[i][0:8], 16)/10000000.0 # each step is in 0.1Hz
+                amp = int(settings[i][14:18], 16)
+                phase = int(settings[i][9:13], 16)
+                self.channels[i] = {'freq': freq, 'amp': amp, 'phase': phase}
+        except (ValueError):
+            good = False
+        return good
+
 
     def setFreq(self, channel, value):
         channel = int(channel)
