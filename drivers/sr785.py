@@ -10,7 +10,7 @@ class StanfordSR785:
         self.__type = "dynamic signal analyzer"
         try:
             # Needs terminator char, manual p422
-            self. device = visa.instrument("GPIB::%d" %(gpib), term_chars = visa.LF)
+            self.device = visa.instrument("GPIB::%d" %(gpib), term_chars = visa.LF)
             if not self.__TestConnection():
                 error = True
         except visa.VisaIOError:
