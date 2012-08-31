@@ -200,7 +200,6 @@ class MultiMeter:
                                   cnum[d[3]]
                                   )
         except (KeyError):
-            print s
             return None
 
         s['unit'] = unit
