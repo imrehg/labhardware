@@ -1,8 +1,8 @@
 import serial
 import os
 
-class PowerMeter:
-    """ GWInstek GDM-396 power meter """
+class MultiMeter:
+    """ GWInstek GDM-396 multi meter """
 
     port = None
 
@@ -209,9 +209,9 @@ class PowerMeter:
 
 if __name__ == "__main__":
 
-    pm = PowerMeter(4)
+    mm = MultiMeter(4)
     # print pm.read()
     from time import sleep
     while True:
-        print pm.getnumber()
+        print mm.getnumber()
         sleep(0.1)
