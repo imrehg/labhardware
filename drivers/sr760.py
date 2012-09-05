@@ -1,8 +1,10 @@
 import visa
 from re import match
-from numpy import array, append
+from numpy import array, append, linspace
 
 class StanfordSR760:
+
+    basefreq = 99750.0 # Hz - this is the "100kHz" from the manufacturer's point of view
 
     def __init__(self, gpib):
         ''' Initialize device '''
@@ -90,22 +92,27 @@ class StanfordSR760:
             out = array(zip(data1, data2))
         return out
 
-    def pulldata(self):
+    def pulldata(self, askx = False):
         """
         Pull data from signal analyzer
 
         Input:
         ------
-        chn: 0 - channel A, 1 - channel B, 2 - both A & B
-
-        Currently assumes same length in display A and B
+        askx: (boolean) if true ask the actual X values, otherwise infere from
+              span and start frequency, assuming linear x scale and frequency measurement
         """
         n = 400
 
-        datax = array([])
-        for i in range(n):
-            xi = float(self.ask("BVAL? 0, %d" %i))
-            datax = append(datax, xi)
+        if askx:
+            datax = array([])
+            for i in range(n):
+                xi = float(self.ask("BVAL? 0, %d" %i))
+                datax = append(datax, xi)
+        else:
+            spani = int(self.ask("SPAN?"))
+            span = self.basefreq / 2**(19 - spani)
+            startfreq = float(self.ask("STRF?"))
+            datax = linspace(startfreq, startfreq+span, n)
 
         vals = self.ask("SPEC? 0").split(',')
         datay = array([])
