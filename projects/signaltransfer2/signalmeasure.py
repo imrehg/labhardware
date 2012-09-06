@@ -62,6 +62,13 @@ if __name__ == "__main__":
         except ValueError:
             pass
 
+    avgnum = 0
+    while avgnum < 1:
+        try:
+            avgnum = int(raw_input("Averaging number? "))
+        except ValueError:
+            pass
+
     realspan = span - multiplier
     ranges = 2 ** multiplier
     
@@ -72,7 +79,7 @@ if __name__ == "__main__":
     for i in range(ranges):
         device.write("STRF %f" %(startfreq))
         device.write("AVGO 1")
-        device.write("NAVG 200")
+        device.write("NAVG %d" %avgnum)
         device.write("AVGT 0")
         device.write("AVGM 0")
         device.write("OVLP 0")
