@@ -94,6 +94,9 @@ if __name__ == "__main__":
     ranges = 2 ** multiplier
     
     device.write("SPAN %d" %(realspan))
+    device.write("ICPL 0")  # set AC coupling
+    device.write("MEAS 0 1")  # select PSD measurement
+    device.write("DISP 0 0")  # display log magnitude
     startfreq = 0
     basefreq = device.basefreq
     freqstep = basefreq / 2**(19 - realspan)
