@@ -60,7 +60,7 @@ if __name__ == "__main__":
 
     print "0: 191mHz\t1: 382mHz\t2:763mHz\t3:1.5Hz"
     print "4: 3.1Hz\t5: 6.1Hz\t6: 12.2Hz\t7: 24.4Hz"
-    print "8: 48.75Hz\t9: 97.5Hz\t19: 195Hz\t11: 390Hz"
+    print "8: 48.75Hz\t9: 97.5Hz\t10: 195Hz\t11: 390Hz"
     print "12: 780Hz\t13: 1.56kHz\t14: 3.125kHz\t15: 6.25kHz"
     print "16: 12.5kHz\t17: 25kHz\t18: 50kHz\t19: 100kHz"
 
