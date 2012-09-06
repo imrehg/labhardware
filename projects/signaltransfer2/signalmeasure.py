@@ -27,10 +27,19 @@ if __name__ == "__main__":
         print "Cannot find configuration file."
         sys.exit(1)
 
+    runparams = [None, None, None, None]
+    if len(sys.argv) >= 2:
+        try:
+            runparams[0] = int(sys.argv[2])  # should be span
+            runparams[1] = int(sys.argv[3])  # should be multipier
+            runparams[2] = int(sys.argv[4])  # should be averaging
+            runparams[3] = sys.argv[5]
+        except (ValueError, IndexError):
+            pass
+
     # Get Configuration
     GPIB = config.getint('Setup', 'GPIB')
     basename = config.get('Setup', 'Basename')
-    outname = "%s_%s" %(basename, strftime("%y%m%d_%H%M%S"))
 
     # Connect to device
     try:
@@ -39,13 +48,23 @@ if __name__ == "__main__":
         print("Couldn't find things on GPIB channel %d, exiting" %(GPIB))
         sys.exit(1)
 
+    # Setting up the output filename
+    if not runparams[3]:
+        name = raw_input("Output basename? (default: %s) " %basename)
+        if len(name) > 0:
+            basename = name
+    else:
+        basename = runparams[3]
+    outname = "%s_%s" %(basename, strftime("%y%m%d_%H%M%S"))
+
+
     print "0: 191mHz\t1: 382mHz\t2:763mHz\t3:1.5Hz"
     print "4: 3.1Hz\t5: 6.1Hz\t6: 12.2Hz\t7: 24.4Hz"
     print "8: 48.75Hz\t9: 97.5Hz\t19: 195Hz\t11: 390Hz"
     print "12: 780Hz\t13: 1.56kHz\t14: 3.125kHz\t15: 6.25kHz"
     print "16: 12.5kHz\t17: 25kHz\t18: 50kHz\t19: 100kHz"
 
-    span = -1
+    span = -1 if runparams[0] is None else runparams[0]
     while span not in range(20):
         try:
             span = int(raw_input("Frequency span? (s = 0-19) "))
@@ -55,19 +74,21 @@ if __name__ == "__main__":
     if span == 0:
         multiplier = 0
     else:
-        multiplier = -1
+        multiplier = -1 if runparams[1] is None else runparams[1]
     while multiplier not in range(span+1):
         try:
             multiplier = int(raw_input("Multiplier? (m = 0-%d), meaning 2^m better resolution " %(span)))
         except ValueError:
             pass
 
-    avgnum = 0
+    avgnum = 0 if runparams[2] is None else runparams[2]
     while avgnum < 1:
         try:
             avgnum = int(raw_input("Averaging number? "))
         except ValueError:
             pass
+
+    print "Output filename: %s" %(outname)
 
     realspan = span - multiplier
     ranges = 2 ** multiplier
