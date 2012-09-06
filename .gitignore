@@ -5,3 +5,6 @@
 *.tif
 *.asc
 *.csv
+*.png
+*.npy
+*.conf
