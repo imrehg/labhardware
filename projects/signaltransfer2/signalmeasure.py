@@ -4,7 +4,7 @@ Transfering data from Stanford Research SR785 Signal analyzer
 import ConfigParser
 import numpy as np
 import sys
-from time import strftime, sleep
+from time import strftime, sleep, time
 
 ## For Windows:
 import matplotlib
@@ -76,6 +76,7 @@ if __name__ == "__main__":
     startfreq = 0
     basefreq = device.basefreq
     freqstep = basefreq / 2**(19 - realspan)
+    start = time()
     for i in range(ranges):
         device.write("STRF %f" %(startfreq))
         device.write("AVGO 1")
@@ -98,6 +99,7 @@ if __name__ == "__main__":
             vals = np.append(vals, data, axis=0)
         print "Done %d/%d" %(i+1, ranges)
         startfreq += freqstep
+    print "Total time: %.1fs" %(time()-start)
 
     # Get save data
     np.savetxt("%s.csv" %(outname), vals, delimiter=",")
