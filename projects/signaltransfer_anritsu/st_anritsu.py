@@ -61,7 +61,12 @@ if __name__ == "__main__":
     receive = device.getdata()
     vals = np.array(zip(freq, receive))
 
-    np.savetxt("%s.csv" %(outname), vals, delimiter=",")
+    np.savetxt("%s.csv" %(outname),
+               vals,
+               delimiter=",",
+               fmt=["%g", "%.2f"],
+               header="Frequency(Hz), Specrum(dBm)",
+               )
 
     pl.plot(vals[:, 0]/1e6, vals[:, 1])
     pl.xlabel("Frequency (MHz)")
