@@ -3,7 +3,7 @@ Drivers for Anritsu products
 """
 import visa
 from re import match
-from numpy import array, append, linspace
+from numpy import array, append, linspace, zeros
 
 class MS2601:
     """ Spectrum analyzer, old instrument.
@@ -52,6 +52,21 @@ class MS2601:
     def ask(self, command):
         ''' Connect to VISA ask '''
         return self.device.ask(command)
+
+    def __dataconv(self, line):
+        num = float(line[1:])
+        if line[0] == '-':
+            num *= -1
+        return num
+
+    def getdata(self, start=None, limit=None):
+        start, num = 0, 501
+        self.device.write("BIN 0")
+        self.device.write("XMA? %d,%d" %(start, num))
+        resp = zeros(num)
+        for i in range(num):
+            resp[i] = self.__dataconv(self.device.read())
+        return resp
 
 
 if __name__ == "__main__":
