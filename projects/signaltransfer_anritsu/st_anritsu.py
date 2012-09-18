@@ -70,5 +70,5 @@ if __name__ == "__main__":
 
     pl.plot(vals[:, 0]/1e6, vals[:, 1])
     pl.xlabel("Frequency (MHz)")
-    pl.ylabel("Spectrum (dBV)")
+    pl.ylabel("Spectrum (dBm)")
     pl.savefig("%s.png" %(outname))
