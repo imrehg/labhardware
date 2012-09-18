@@ -1,0 +1,3 @@
+[Setup]
+GPIB = 18
+Basename = signal
