@@ -4,6 +4,7 @@ Drivers for Anritsu products
 import visa
 from re import match
 from numpy import array, append, linspace, zeros
+import struct
 
 class MS2601:
     """ Spectrum analyzer, old instrument.
@@ -78,15 +79,40 @@ class MS2601:
             out = None
         return out
 
-    def getdata(self, start=None, limit=None):
-        start, num = 0, 501
-        self.device.write("BIN 0")
-        self.device.write("XMA? %d,%d" %(start, num))
+    def getdata(self, start=None, num=None, binary=True):
+        """ Transfer data from spectrum analyzer
+
+        input parameters:
+        start: start bin, integer (0 to 500), defaults to 0
+        num: number of bins (1 to 501-start), defaults to 501
+        binary: binary transfer (True/False), defaults to True
+
+        return:
+        resp: the response y values (dBm always)
+        unit: fixed to dBm at the moment
+
+        """
+        start = 0 if not start else start
+        num = 501 if not num else num
         resp = zeros(num)
-        for i in range(num):
-            resp[i] = self.__dataconv(self.device.read())
-        units = self.units["UNT 0"]  # readout always seems to be in dBm, even if the interface is changed
-        return resp, units
+        if binary:
+            self.device.write("BIN 1")
+            self.device.write("XMA? %d,%d" %(start, num))
+            self.device.values_format = visa.double
+            self.device.term_chars = ''
+            res = self.read()
+            for i in range(num):
+                idx = i*2 + 1
+                resp[i] = struct.unpack( "h", res[idx:idx+2] )[0] * 0.01
+            self.device.values_format = visa.ascii
+            self.device.term_chars = visa.CR+visa.LF
+        else:
+            self.device.write("BIN 0")
+            self.device.write("XMA? %d,%d" %(start, num))
+            for i in range(num):
+                resp[i] = self.__dataconv(self.device.read())
+        unit = self.units["UNT 0"]  # readout always seems to be in dBm, even if the interface is changed
+        return resp, unit
 
 
 if __name__ == "__main__":
