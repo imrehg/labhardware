@@ -11,6 +11,14 @@ class MS2601:
 
     """
 
+    units = {"UNT 0": "dBm",
+             "UNT 1": "dBuV",
+             "UNT 2": "dBmV",
+             "UNT 3": "V",
+             "UNT 4": "dBuV(emf)",
+             "UNT 5": "dBuV/m",
+             }
+
     def __init__(self, gpib):
         """ Get an MS2601 device
         Input parameter: GPIB address (integer)
@@ -59,6 +67,17 @@ class MS2601:
             num *= -1
         return num
 
+    def getunit(self):
+        """ Get Y-unit of the currently set interface
+
+        """
+        unit = self.ask("UNT?")
+        try:
+            out = self.units[unit]
+        except KeyError:
+            out = None
+        return out
+
     def getdata(self, start=None, limit=None):
         start, num = 0, 501
         self.device.write("BIN 0")
@@ -66,7 +85,8 @@ class MS2601:
         resp = zeros(num)
         for i in range(num):
             resp[i] = self.__dataconv(self.device.read())
-        return resp
+        units = self.units["UNT 0"]  # readout always seems to be in dBm, even if the interface is changed
+        return resp, units
 
 
 if __name__ == "__main__":
