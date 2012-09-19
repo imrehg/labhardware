@@ -3,7 +3,7 @@ Drivers for Anritsu products
 """
 import visa
 from re import match
-from numpy import array, append, linspace, zeros
+from numpy import array, append, linspace, zeros, sqrt
 import struct
 
 class MS2601:
@@ -114,6 +114,12 @@ class MS2601:
         unit = self.units["UNT 0"]  # readout always seems to be in dBm, even if the interface is changed
         return resp, unit
 
+    def dBmToV(self, dBm):
+        """ Convert dBm into voltage value
+        reference: http://www.referencedesigner.com/rfcal/cal_02.php
+
+        """
+        return sqrt(10 ** (dBm / 10) * (50 * 1e-3))
 
 if __name__ == "__main__":
     device = MS2601(18)
