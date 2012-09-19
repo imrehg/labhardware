@@ -58,17 +58,19 @@ if __name__ == "__main__":
     spf = int(device.ask("SPF?")[3:])
     freq = np.linspace(cnf - spf/2, cnf + spf/2, 501)
     
-    receive = device.getdata()
+    receive, unit = device.getdata()
+    if not unit:
+        unit = "unknown"
     vals = np.array(zip(freq, receive))
 
     np.savetxt("%s.csv" %(outname),
                vals,
                delimiter=",",
                fmt=["%g", "%.2f"],
-               header="Frequency(Hz), Specrum(dBm)",
+               header="Frequency(Hz), Specrum(%s)" %unit,
                )
 
     pl.plot(vals[:, 0]/1e6, vals[:, 1])
     pl.xlabel("Frequency (MHz)")
-    pl.ylabel("Spectrum (dBm)")
+    pl.ylabel("Spectrum (%s)" %unit)
     pl.savefig("%s.png" %(outname))
