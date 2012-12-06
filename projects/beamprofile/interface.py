@@ -46,10 +46,10 @@ def preparedata(data):
     """
     dh, dw = data.shape
     border = np.array([])
-    border = np.append(border, np.ravel(data[:, 0]))
-    border = np.append(border, np.ravel(data[0, :]))
-    border = np.append(border, np.ravel(data[:, -1]))
-    border = np.append(border, np.ravel(data[-1, :]))
+    border = np.append(border, np.ravel(data[:-1, 0]))
+    border = np.append(border, np.ravel(data[0, 1:]))
+    border = np.append(border, np.ravel(data[1:, -1]))
+    border = np.append(border, np.ravel(data[-1, :-1]))
     borderavg, bordervar = np.mean(border), np.var(border)
     slimdata = np.copy(data) - borderavg
     maxy, maxx = np.unravel_index(np.argmax(slimdata), slimdata.shape)
