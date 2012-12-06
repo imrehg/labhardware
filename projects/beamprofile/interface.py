@@ -153,10 +153,40 @@ def createiface(data):
     axCutx.set_ylim([256, -10])
     axCutx.set_yticks([0, 128, 256])
 
-    htext = fig.text(0.5, 0.975, 'wx/wy = D4s/2*pixelsize [um] along principal axes\n = beam waist for Gaussian beam', horizontalalignment='center', fontsize=20)
-    sztext = fig.text(0.5, 0.81, st, horizontalalignment='center', fontsize=67)
-    atext = fig.text(0.5, 0.10, adeg, horizontalalignment='center', fontsize=65)
-    uptext = fig.text(0.5, 0.05, text, horizontalalignment='center', fontsize=25)
+    # Header text
+    htext = fig.text(0.5, 1.0,
+                     'wx/wy = d4s/2*pixelsize [um] along principal axes\n = beam waist for Gaussian beam',
+                     horizontalalignment='center',
+                     verticalalignment='top',
+                     fontsize=20,
+                     family='monospace',
+                     )
+    # Size text
+    sztext = fig.text(0.5,
+                      0.81,
+                      st,
+                      horizontalalignment='center',
+                      verticalalignment='baseline',
+                      fontsize=67,
+                      family='monospace',
+                      )
+    # Angle text
+    atext = fig.text(0.5,
+                     0.10,
+                     adeg,
+                     horizontalalignment='center',
+                     verticalalignment='baseline',
+                     fontsize=65,
+                     family='monospace')
+    # Rangetext
+    uptext = fig.text(0.5,
+                      0.05,
+                      text,
+                      horizontalalignment='center',
+                      verticalalignment='baseline',
+                      fontsize=25,
+                      family='monospace',
+                      )
 
     ret = (fig, img, centre, ellipse, ax1, ax2, xl, xg, yl, yg, sztext, uptext, atext)
     return ret
