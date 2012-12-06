@@ -33,6 +33,17 @@ def gauss(x, x0, sx, scale):
     return np.exp(-(x-x0)**2 / (2 * sx**2)) * scale
 
 def preparedata(data):
+    """ Prepare data for processing by cutting down on the area for D4s
+
+    Input:
+    ------
+    data: original reading values in numpy array from
+
+    Output:
+    ------
+    prepared: data in the cropped area
+    (xbottom, ybottom): value of the starting corner in two dimension
+    """
     dh, dw = data.shape
     border = np.array([])
     border = np.append(border, np.ravel(data[:, 0]))
