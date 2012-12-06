@@ -48,9 +48,6 @@ def preparedata(data):
     yl = slimdata[maxy, :]
     ydim = sum(sum([yl > 10*bordervar]))
     dim = 2 * max(xdim, ydim)
-    print "Maxx/y:", maxx, maxy
-    print "x/ydim", xdim, ydim
-    print "Border", borderavg, bordervar
     xbottom, xtop = limits(maxx, dim, (0, dw))
     ybottom, ytop = limits(maxy, dim, (0, dh))
     testdata = slimdata[ybottom:ytop, xbottom:xtop]
@@ -64,7 +61,6 @@ def preparedata(data):
     xbottom, xtop = limits(xc, limx, (0, dw))
     ybottom, ytop = limits(yc, limy, (0, dh))
     prepared = slimdata[ybottom:ytop, xbottom:xtop]
-    print prepared.shape
     return prepared, (xbottom, ybottom)
 
 def analyze(data):
