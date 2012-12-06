@@ -12,9 +12,19 @@ import beam
 import interface
 
 if __name__ == "__main__":
+
     l = fw.DC1394Library()
     cams = l.enumerate_cameras()
-    cam0 = fw.Camera(l, cams[0]['guid'], isospeed=800)
+
+    channel = int(raw_input("Which camera you want to use (0/1)? "))
+    cam0 = fw.Camera(l, cams[channel]['guid'], isospeed=800)
+
+    # Get number of pictures
+    picnum = 1
+    try:
+        picnum = int(raw_input("How many pictures to take? "))
+    except:
+        pass
 
     print "Connected to: %s / %s" %(cam0.vendor, cam0.model)
 
@@ -41,17 +51,15 @@ if __name__ == "__main__":
     xl = np.array(range(0, dimx))
     yl = np.array(range(0, dimy))
 
-    data = cam0.current_image
-
-    stamp = strftime("%y%m%d_%H%M%S")
-    outname = 'beamprofile_%s' %(stamp)
-    # save txt format for interoperation
-    np.savetxt(outname+".txt", data, fmt="%d")
-
-    interface.createiface(data)
-    pl.title(outname)
-
-    pl.savefig("%s.png" %outname)
+    timestamp = strftime("%y%m%d_%H%M%S")
+    for index in range(picnum):
+        data = cam0.current_image
+        outname = 'beamprofile_%s_%d' %(timestamp, index)
+        # save txt format for interoperation
+        np.savetxt(outname+".txt", data, fmt="%d")
+        interface.createiface(data)
+        pl.title(outname)
+        pl.savefig("%s.png" %outname)
     pl.draw()
     cam0.stop()
 
