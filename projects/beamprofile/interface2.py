@@ -21,7 +21,7 @@ def sizetext(sx, sy):
         csign = '>'
     else:
         csign = '<'
-    ctext = "wx  |  wy\n%.1f %s %.1f" %(sx, csign, sy)
+    ctext = "wx : wy\n%.1f %s %.1f" %(sx, csign, sy)
     return ctext
 
 def gauss(x, x0, sx, scale):
@@ -119,11 +119,11 @@ def createiface(data):
 
     # Header text
     htext = fig.text(0.5,
-                     1.0,
-                     'wx/wy = Gaussian beam waist [um] along principal axes',
+                     0.99,
+                     'wx,wy = Gaussian beam waists [um] along principal axes',
                      horizontalalignment='center',
                      verticalalignment='top',
-                     fontsize=20,
+                     fontsize=16,
                      family='monospace',
                      )
     # Size text

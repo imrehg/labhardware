@@ -19,7 +19,7 @@ def sizetext(sx, sy):
         csign = '>'
     else:
         csign = '<'
-    ctext = "wx  |  wy\n%.1f %s %.1f" %(sx, csign, sy)
+    ctext = "wx : wy\n%.1f %s %.1f" %(sx, csign, sy)
     return ctext
 
 def limits(centre, out, valid):
@@ -154,11 +154,12 @@ def createiface(data):
     axCutx.set_yticks([0, 128, 256])
 
     # Header text
-    htext = fig.text(0.5, 1.0,
-                     'wx/wy = d4s/2*pixelsize [um] along principal axes\n = beam waist for Gaussian beam',
+    htext = fig.text(0.5,
+                     0.99,
+                     'wx,wy = D4s/2*pixelsize [um] along principal axes\n = beam waists for Gaussian beam',
                      horizontalalignment='center',
                      verticalalignment='top',
-                     fontsize=20,
+                     fontsize=16,
                      family='monospace',
                      )
     # Size text
