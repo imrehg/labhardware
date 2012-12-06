@@ -26,8 +26,13 @@ def d4s(data):
     xy = np.sum(data * (X - xx) * (Y - yy)) / P
     gamm = np.sign(xx2 - yy2)
     angle = 0.5 * np.arctan(2*xy / (xx2 - yy2))
-    dx = 2 * np.sqrt(2) * (xx2 + yy2 + gamm * ( (xx2 - yy2)**2 + 4*xy**2)**0.5)**(0.5)
-    dy = 2 * np.sqrt(2) * (xx2 + yy2 - gamm * ( (xx2 - yy2)**2 + 4*xy**2)**0.5)**(0.5)
+    try:
+        dx = 2 * np.sqrt(2) * (xx2 + yy2 + gamm * ( (xx2 - yy2)**2 + 4*xy**2)**0.5)**(0.5)
+        dy = 2 * np.sqrt(2) * (xx2 + yy2 - gamm * ( (xx2 - yy2)**2 + 4*xy**2)**0.5)**(0.5)
+    except:
+        # In case of error, just make the size very large
+        print "Fitting error"
+        dx, dy = data.shape
     return xx, yy, dx, dy, angle
 
 def getellipse(xx, yy, dx, dy, angle):
