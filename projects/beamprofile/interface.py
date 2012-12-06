@@ -128,13 +128,14 @@ def createiface(data):
     yline = range(0, sy)
 
     cutlinewidth=3
+    fitlinewidth=2
     axCuty = divider.append_axes("right", size=1.4, pad=0.1, sharey=axImg)
-    yg, = axCuty.plot(ycutg, yline, 'r-', linewidth=cutlinewidth)
     yl, = axCuty.plot(ycut, yline, 'k-', linewidth=cutlinewidth)
+    yg, = axCuty.plot(ycutg, yline, 'r-', linewidth=fitlinewidth)
 
     axCutx = divider.append_axes("bottom", size=1.4, pad=0.1, sharex=axImg)
-    xg, = axCutx.plot(xline, xcutg, 'r-', linewidth=cutlinewidth)
     xl, = axCutx.plot(xline, xcut, 'k-', linewidth=cutlinewidth)
+    xg, = axCutx.plot(xline, xcutg, 'r-', linewidth=fitlinewidth)
 
     # Setting up limits
     axImg.set_xlim([0, sx])
