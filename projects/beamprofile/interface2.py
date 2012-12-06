@@ -5,6 +5,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 import fastfit
 import gaussfit
+import interface
 
 # Set for our camera
 sx, sy, pixelsize = 640, 480, 5.6
@@ -29,9 +30,12 @@ def gauss(x, x0, sx, scale):
 
 def analyze(data):
     """ Do all the analysis that's needed to create the interface """
-    xx, yy, dx, dy, angle = fastfit.d4s(data)
+    prepared, centre = interface.preparedata(data)
+    xx, yy, dx, dy, angle = fastfit.d4s(prepared)
+    xx += centre[0]
+    yy += centre[1]
     try:
-        outparams = gaussfit.fitgaussian(data)
+        outparams = gaussfit.fitgaussian(prepared)
         # Order somehow changed between x and y
         if outparams is None:
             return None
@@ -92,13 +96,14 @@ def createiface(data):
     yline = range(0, sy)
 
     cutlinewidth=3
+    fitlinewidth=2
     axCuty = divider.append_axes("right", size=1.4, pad=0.1, sharey=axImg)
-    yg, = axCuty.plot(ycutg, yline, 'r-', linewidth=cutlinewidth)
     yl, = axCuty.plot(ycut, yline, 'k-', linewidth=cutlinewidth)
+    yg, = axCuty.plot(ycutg, yline, 'r-', linewidth=fitlinewidth)
 
     axCutx = divider.append_axes("bottom", size=1.4, pad=0.1, sharex=axImg)
-    xg, = axCutx.plot(xline, xcutg, 'r-', linewidth=cutlinewidth)
     xl, = axCutx.plot(xline, xcut, 'k-', linewidth=cutlinewidth)
+    xg, = axCutx.plot(xline, xcutg, 'r-', linewidth=fitlinewidth)
 
     # Setting up limits
     axImg.set_xlim([0, sx])
