@@ -22,13 +22,57 @@ def sizetext(sx, sy):
     ctext = "wx  |  wy\n%.1f %s %.1f" %(sx, csign, sy)
     return ctext
 
+def limits(centre, out, valid):
+    """ Calculate matrix borders with limits """
+    bottom = max(valid[0], centre-out)
+    top = min(valid[1], centre+out)
+    return bottom, top
+
 def gauss(x, x0, sx, scale):
     """ Simple gaussian """
     return np.exp(-(x-x0)**2 / (2 * sx**2)) * scale
 
+def preparedata(data):
+    dh, dw = data.shape
+    border = np.array([])
+    border = np.append(border, np.ravel(data[:, 0]))
+    border = np.append(border, np.ravel(data[0, :]))
+    border = np.append(border, np.ravel(data[:, -1]))
+    border = np.append(border, np.ravel(data[-1, :]))
+    borderavg, bordervar = np.mean(border), np.var(border)
+    slimdata = np.copy(data) - borderavg
+    maxy, maxx = np.unravel_index(np.argmax(slimdata), slimdata.shape)
+    # Find the number of points in the x/y direction that are above the background noise
+    xl = slimdata[:, maxx]
+    xdim = sum(sum([xl > 10*bordervar]))
+    yl = slimdata[maxy, :]
+    ydim = sum(sum([yl > 10*bordervar]))
+    dim = 2 * max(xdim, ydim)
+    print "Maxx/y:", maxx, maxy
+    print "x/ydim", xdim, ydim
+    print "Border", borderavg, bordervar
+    xbottom, xtop = limits(maxx, dim, (0, dw))
+    ybottom, ytop = limits(maxy, dim, (0, dh))
+    testdata = slimdata[ybottom:ytop, xbottom:xtop]
+    xx, yy, dx, dy, angle = fastfit.d4s(testdata)
+
+    xc = int(xbottom+xx)
+    yc = int(ybottom+yy)
+    limr = 0.69
+    limx = int(dx * limr)
+    limy = int(dy * limr)
+    xbottom, xtop = limits(xc, limx, (0, dw))
+    ybottom, ytop = limits(yc, limy, (0, dh))
+    prepared = slimdata[ybottom:ytop, xbottom:xtop]
+    print prepared.shape
+    return prepared, (xbottom, ybottom)
+
 def analyze(data):
     """ Do all the analysis that's needed to create the interface """
-    xx, yy, dx, dy, angle = fastfit.d4s(data)
+    prepared, centre = preparedata(data)
+    xx, yy, dx, dy, angle = fastfit.d4s(prepared)
+    xx += centre[0]
+    yy += centre[1]
     xr, yr = fastfit.getellipse(xx, yy, dx, dy, angle)
     # fix axes calculation so no more -1 is needed
     angle *= -1
@@ -46,17 +90,18 @@ def analyze(data):
     except ValueError:
         xc = 320
         yc = 240
+    sy, sx = data.shape
     xcut = data[yc, :]
     ycut = data[:, xc]
     xline = range(0, sx)
     yline = range(0, sy)
     xcutg = gauss(xline, xx, xwidth, max(xcut))
     ycutg = gauss(yline, yy, ywidth, max(ycut))
-
     return (xx, yy, dx, dy, angle, xr, yr, adeg, xxx, xxy, yyx, yyy, xwidth, ywidth, xc, yc, xcut, ycut, xcutg, ycutg)
 
 def createiface(data):
     (xx, yy, dx, dy, angle, xr, yr, adeg, xxx, xxy, yyx, yyy, xwidth, ywidth, xc, yc, xcut, ycut, xcutg, ycutg) = analyze(data)
+    sy, sx = data.shape
 
     st = sizetext(dx/2*pixelsize, dy/2*pixelsize)
     text = "Data range: %d - %d" %(np.min(data), np.max(data))
