@@ -26,10 +26,9 @@ def sizetext(sx, sy):
     return ctext
 
 if __name__ == "__main__":
-    channel = raw_input("Which camera you want to see (0/1)?")
-    channel = int(channel)
     l = fw.DC1394Library()
     cams = l.enumerate_cameras()
+    channel = int(raw_input("Which camera you want to see (0/1)? "))
     cam0 = fw.Camera(l, cams[channel]['guid'], isospeed=800)
 
     print "Connected to: %s / %s" %(cam0.vendor, cam0.model)
@@ -40,8 +39,6 @@ if __name__ == "__main__":
     cam0.exposure.mode = 'manual'
     cam0.exposure.val = cam0.exposure.range[0]
     cam0.shutter.mode = 'manual'
-    print cam0.shutter.range
-    print cam0.exposure.range
     cam0.shutter.val = cam0.shutter.range[0]
 
     print "\nFeatures\n", "="*30
@@ -73,7 +70,7 @@ if __name__ == "__main__":
 
     while True:  # image collection and display
         try:
-            data = cam0.current_image
+            data = np.array(cam0.current_image, dtype='f')
             if elements is None:  # First display, set up output screen
                 elements = interface.createiface(data)
             else:  # Every other iteration just update data
@@ -81,6 +78,8 @@ if __name__ == "__main__":
             pl.draw()
         except KeyboardInterrupt:
             print "Stopping"
+            break
+        except:
             break
 
     cam0.stop()
