@@ -59,6 +59,10 @@ def preparedata(data):
     yl = slimdata[maxy, :]
     ydim = sum(sum([yl > 10*bordervar]))
     dim = 2 * max(xdim, ydim)
+    if dim < 5:
+        # In this case, most likely we don't have a peak, just noise, since
+        # very few points are over the noiselevel
+        return data, (0, 0)
     xbottom, xtop = limits(maxx, dim, (0, dw))
     ybottom, ytop = limits(maxy, dim, (0, dh))
     testdata = slimdata[ybottom:ytop, xbottom:xtop]
