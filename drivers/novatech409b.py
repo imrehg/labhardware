@@ -15,7 +15,7 @@ class N409B:
             portbase = 'COM'
 
         self.ser = None
-        for i in xrange(10):
+        for i in xrange(20):
             try:
                 self.ser = serial.Serial("%s%d" %(portbase, i),
                                          baudrate=19200,
