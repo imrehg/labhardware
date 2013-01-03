@@ -1,5 +1,6 @@
 import serial
 import os
+import numpy as np
 
 class N409B:
     """ Novatech 409B 171 MHz 4-channel signal generator """
@@ -132,6 +133,57 @@ class N409B:
 
     def getChannels(self):
         return self.channels
+
+    def __freqToHex(self, freq):
+        """ Turn frequency in MHz into binary value for output """
+        return '{:08x}'.format(int(freq * 1e7))
+
+    def setupTable(self, table):
+        cmds = ["m 0"]
+        ch = 0
+        i = 0
+        for t in table:
+            cmds += ["t%d %s %s,%s,%s,%s" %(ch, '{:04x}'.format(i), self.__freqToHex(t[0]), '0000', '{:04x}'.format(t[2]), '{:02x}'.format(t[3]))]
+            ch = 1 - ch
+            if ch == 0:
+                i += 1
+        cmds += ["m t"]
+        for c in cmds:
+            # print c
+            self.sendCmd(c)
+        pass
+
+    def sweep(self, params):
+        """ Run a sweep with the given parameters """
+        startfreq0 = params['sfreq0']
+        finishfreq0 = params['ffreq0']
+        startfreq1 = params['sfreq1']
+        finishfreq1 = params['ffreq1']
+        totaltime = params['totaltime']
+        stepsize = params['stepsize']
+        repeat = params['repeat']
+        nsteps = int(totaltime / stepsize * 1e4) + 1
+
+        freq0 = np.linspace(startfreq0, finishfreq0, nsteps)  # in MHz units
+        freq1 = np.linspace(startfreq1, finishfreq1, nsteps)  # in MHz units
+
+        stepstring = '{:02x}'.format(stepsize)
+        cmds = ["m 0"]
+        for i in range(nsteps):
+            thisstep = stepstring if ((i < (nsteps-1)) or repeat) else 'ff'
+            cmds += ["t0 %s %s,%s,%s,%s" %('{:04x}'.format(i), self.__freqToHex(freq0[i]), '0000', '03ff', thisstep)]
+            cmds += ["t1 %s %s,%s,%s,%s" %('{:04x}'.format(i), self.__freqToHex(freq1[i]), '0000', '03ff', thisstep)]
+        cmds += ["t0 %s %s,%s,%s,%s" %('{:04x}'.format(nsteps), self.__freqToHex(freq0[0]), '0000', '03ff', '00')]
+        cmds += ["t1 %s %s,%s,%s,%s" %('{:04x}'.format(nsteps), self.__freqToHex(freq1[0]), '0000', '03ff', '00')]
+        cmds += ["m t"]
+        import time
+        for c in cmds:
+            self.sendCmd(c)
+        return True
+
+    def trigger(self):
+        """ Send software trigger """
+        self.sendCmd("ts");
 
 if __name__ == "__main__":
     synth = N409B()
