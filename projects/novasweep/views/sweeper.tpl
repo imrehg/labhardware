@@ -107,7 +107,7 @@ body.loading .modal {
              value = parseFloat(this.value);
          }
          settings[id] = value;
-         var numsteps = Math.floor(settings.totaltime / settings.stepsize * 10000);
+         var numsteps = Math.floor(settings.totaltime / settings.stepsize * 10000) + 1;
          if (numsteps > 16384) {
             okparams = false;
             stepsdiv.addClass("warning");
@@ -169,7 +169,7 @@ body.loading .modal {
   </tr>
   <tr>
     <td>Total time in seconds</td>
-    <td colspan=2><input class="setting" id="totaltime" type="number" name="totaltime" min="0.0001" step="0.0001" max="200" value="1"></input><br><div id="stepnum">10000 steps</div></td>
+    <td colspan=2><input class="setting" id="totaltime" type="number" name="totaltime" min="0.0001" step="0.0001" max="200" value="1"></input><br><div id="stepnum">10001 steps</div></td>
   </tr>
   <tr>
     <td>Repeat</td>
